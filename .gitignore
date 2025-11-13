@@ -30,13 +30,7 @@ app/.docusaurus/
 app/build/
 app/.cache-loader/
 
-# Feishu synced content (will be regenerated)
-app/docs/
-app/blog/
-app/i18n/en/docusaurus-plugin-content-docs/
-app/i18n/en/docusaurus-plugin-content-blog/
-
-# Feishu synced assets
+# Feishu synced assets only (keep content in git for deployment)
 app/static/feishu-assets/
 
 # ============================================

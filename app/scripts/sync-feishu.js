@@ -34,6 +34,13 @@ const requiredEnvVars = [
 
 console.log('🔍 验证环境变量...');
 
+// 检查是否跳过同步
+if (process.env.SKIP_FEISHU_SYNC === 'true') {
+  console.log('⏭️  SKIP_FEISHU_SYNC=true');
+  console.log('✨ 跳过飞书同步，使用现有内容进行构建\n');
+  process.exit(0);
+}
+
 const missingVars = requiredEnvVars.filter(v => !process.env[v]);
 
 if (missingVars.length > 0) {
@@ -41,7 +48,8 @@ if (missingVars.length > 0) {
   console.error('\n请确保以下操作:');
   console.error('  1. 复制 .env.example 到 .env');
   console.error('  2. 填写所有必需的环境变量');
-  console.error('  3. 重新运行此脚本\n');
+  console.error('  3. 重新运行此脚本');
+  console.error('  4. 或设置 SKIP_FEISHU_SYNC=true 跳过同步\n');
   process.exit(1);
 }
 
