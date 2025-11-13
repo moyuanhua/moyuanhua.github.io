@@ -31,7 +31,17 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+根据 [constitution.md](../.specify/memory/constitution.md) 检查以下合规性:
+
+- [ ] **I. Content-First Philosophy**: 功能是否优先考虑内容创作者体验?是否对技术细节透明?
+- [ ] **II. 双引擎架构**: 是否同时遵循feishu-pages规则和Docusaurus架构?
+- [ ] **III. API限流与容错**: 是否遵守300ms间隔?是否实现了重试机制?
+- [ ] **IV. 权限与安全**: 敏感信息是否通过环境变量管理?
+- [ ] **V. 元数据与目录结构**: 是否保持飞书文档的目录结构?元数据是否正确转换?
+- [ ] **VI. 资源处理与性能**: 资源下载是否完整?构建时间是否合理?
+- [ ] **VII. CI/CD集成**: 是否支持自动化部署?是否能无人值守运行?
+
+如有违反,必须在"Complexity Tracking"部分提供充分理由。
 
 ## Project Structure
 

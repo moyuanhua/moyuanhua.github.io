@@ -1,0 +1,91 @@
+# ============================================
+# Environment Variables
+# ============================================
+.env
+.env.local
+.env.*.local
+
+# DO NOT ignore example files
+!.env.example
+
+# ============================================
+# Node.js
+# ============================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Package manager files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# ============================================
+# Docusaurus
+# ============================================
+app/.docusaurus/
+app/build/
+app/.cache-loader/
+
+# Feishu synced content (will be regenerated)
+app/docs/
+app/blog/
+app/i18n/en/docusaurus-plugin-content-docs/
+app/i18n/en/docusaurus-plugin-content-blog/
+
+# Feishu synced assets
+app/static/feishu-assets/
+
+# ============================================
+# Temporary Files
+# ============================================
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ============================================
+# IDE / Editor
+# ============================================
+.vscode/
+.idea/
+*.iml
+*.sublime-project
+*.sublime-workspace
+
+# ============================================
+# Logs
+# ============================================
+*.log
+logs/
+npm-debug.log*
+
+# ============================================
+# Build Outputs
+# ============================================
+dist/
+build/
+out/
+
+# ============================================
+# Testing
+# ============================================
+coverage/
+.nyc_output/
+
+# ============================================
+# OS Files
+# ============================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
