@@ -26,11 +26,11 @@
 
 **Purpose**: 项目初始化和基本结构搭建
 
-- [ ] T001 创建项目环境变量模板文件 `.env.example`,包含所有飞书API凭证字段(参考 contracts/env-variables.md)
-- [ ] T002 [P] 更新 `.gitignore` 文件,忽略 `.env`, `app/docs/`, `app/i18n/en/docusaurus-plugin-content-docs/`, `app/static/feishu-assets/`, `app/.docusaurus/`, `app/build/`
-- [ ] T003 [P] 在 `app/` 目录安装依赖: `feishu-pages@^0.7.6` 和 `@easyops-cn/docusaurus-search-local`
-- [ ] T004 [P] 创建 `scripts/` 目录和基础同步脚本框架 `scripts/sync-feishu.js`(环境变量验证部分)
-- [ ] T005 [P] 创建 `app/src/data/projects.json` 文件用于管理首页项目展示数据
+- [x] T001 创建项目环境变量模板文件 `.env.example`,包含所有飞书API凭证字段(参考 contracts/env-variables.md)
+- [x] T002 [P] 更新 `.gitignore` 文件,忽略 `.env`, `app/docs/`, `app/i18n/en/docusaurus-plugin-content-docs/`, `app/static/feishu-assets/`, `app/.docusaurus/`, `app/build/`
+- [x] T003 [P] 在 `app/` 目录安装依赖: `feishu-pages@^0.7.6` 和 `@easyops-cn/docusaurus-search-local`
+- [x] T004 [P] 创建 `scripts/` 目录和基础同步脚本框架 `scripts/sync-feishu.js`(环境变量验证部分)
+- [x] T005 [P] 创建 `app/src/data/projects.json` 文件用于管理首页项目展示数据
 
 **Checkpoint**: 基础项目结构和依赖就绪
 
@@ -42,13 +42,13 @@
 
 **⚠️ CRITICAL**: 所有用户故事工作必须等此阶段完成
 
-- [ ] T006 实现完整的 `scripts/sync-feishu.js` 同步脚本,包含:双语内容同步(zh-CN和en)、300ms API限流、指数退避重试、错误日志记录(参考 contracts/feishu-pages-config.md 和 contracts/cloudflare-pages.md 第94-186行)
-- [ ] T007 [P] 配置 `app/docusaurus.config.ts` 的 i18n 模块:设置 defaultLocale='zh', locales=['zh','en'], 配置 localeConfigs (参考 contracts/docusaurus-config.md)
-- [ ] T008 [P] 在 `app/docusaurus.config.ts` 中集成 `@easyops-cn/docusaurus-search-local` 插件,启用中文分词和双语搜索(参考 contracts/docusaurus-config.md 和 research.md 第246-332行)
-- [ ] T009 [P] 更新 `app/package.json`,添加 `build:cf` 脚本: `"node ../scripts/sync-feishu.js && docusaurus build"` (参考 contracts/cloudflare-pages.md 第67-83行)
-- [ ] T010 [P] 创建 `scripts/validate-structure.js` 脚本,验证中英文文档目录结构和slug一致性
-- [ ] T011 [P] 在 `app/docusaurus.config.ts` 中配置 URL、baseUrl、organizationName、projectName 基础站点信息
-- [ ] T012 配置 `app/docusaurus.config.ts` 的 navbar 导航栏:添加"首页"、"文档"、"博客"、"关于我"、语言切换器(参考 data-model.md 第258-304行)
+- [x] T006 实现完整的 `scripts/sync-feishu.js` 同步脚本,包含:双语内容同步(zh-CN和en)、300ms API限流、指数退避重试、错误日志记录(参考 contracts/feishu-pages-config.md 和 contracts/cloudflare-pages.md 第94-186行)
+- [x] T007 [P] 配置 `app/docusaurus.config.ts` 的 i18n 模块:设置 defaultLocale='zh', locales=['zh','en'], 配置 localeConfigs (参考 contracts/docusaurus-config.md)
+- [x] T008 [P] 在 `app/docusaurus.config.ts` 中集成 `@easyops-cn/docusaurus-search-local` 插件,启用中文分词和双语搜索(参考 contracts/docusaurus-config.md 和 research.md 第246-332行)
+- [x] T009 [P] 更新 `app/package.json`,添加 `build:cf` 脚本: `"node ../scripts/sync-feishu.js && docusaurus build"` (参考 contracts/cloudflare-pages.md 第67-83行)
+- [x] T010 [P] 创建 `scripts/validate-structure.js` 脚本,验证中英文文档目录结构和slug一致性
+- [x] T011 [P] 在 `app/docusaurus.config.ts` 中配置 URL、baseUrl、organizationName、projectName 基础站点信息
+- [x] T012 配置 `app/docusaurus.config.ts` 的 navbar 导航栏:添加"首页"、"文档"、"博客"、"关于我"、语言切换器(参考 data-model.md 第258-304行)
 
 **Checkpoint**: Foundation ready - 用户故事实现现在可以并行开始
 
@@ -62,16 +62,16 @@
 
 ### Implementation for User Story 1
 
-- [ ] T013 [P] [US1] 创建中文版"关于我"页面 `app/src/pages/about.md` (Markdown格式,包含frontmatter: title, description)
-- [ ] T014 [P] [US1] 创建英文版"关于我"页面 `app/i18n/en/docusaurus-plugin-content-pages/about.md` (对应中文版本的翻译)
-- [ ] T015 [P] [US1] 创建 `app/i18n/en/docusaurus-theme-classic/navbar.json` 翻译文件,翻译导航栏所有菜单项(参考 research.md 第245-254行)
-- [ ] T016 [P] [US1] 创建 `app/i18n/en/docusaurus-theme-classic/footer.json` 翻译文件,翻译页脚所有文本
-- [ ] T017 [P] [US1] 在 `app/static/img/` 添加网站 logo 和 favicon
-- [ ] T018 [US1] 在 `app/docusaurus.config.ts` 中配置 themeConfig.navbar.logo 和站点元数据(title, tagline, favicon)
-- [ ] T019 [US1] 运行首次飞书内容同步测试: `node scripts/sync-feishu.js`,验证中英文文档是否正确同步到 `app/docs/` 和 `app/i18n/en/docusaurus-plugin-content-docs/current/`
-- [ ] T020 [US1] 本地构建测试: `cd app && npm run build`,验证构建成功且生成 `build/zh/` 和 `build/en/` 两个语言版本
-- [ ] T021 [US1] 本地预览测试: `cd app && npm run serve`,在浏览器中测试语言自动切换和手动切换功能
-- [ ] T022 [US1] 验收测试: 按照 spec.md 第18-25行的5个验收场景逐一验证
+- [x] T013 [P] [US1] 创建中文版"关于我"页面 `app/src/pages/about.md` (Markdown格式,包含frontmatter: title, description)
+- [x] T014 [P] [US1] 创建英文版"关于我"页面 `app/i18n/en/docusaurus-plugin-content-pages/about.md` (对应中文版本的翻译)
+- [x] T015 [P] [US1] 创建 `app/i18n/en/docusaurus-theme-classic/navbar.json` 翻译文件,翻译导航栏所有菜单项(参考 research.md 第245-254行)
+- [x] T016 [P] [US1] 创建 `app/i18n/en/docusaurus-theme-classic/footer.json` 翻译文件,翻译页脚所有文本
+- [x] T017 [P] [US1] 在 `app/static/img/` 添加网站 logo 和 favicon
+- [x] T018 [US1] 在 `app/docusaurus.config.ts` 中配置 themeConfig.navbar.logo 和站点元数据(title, tagline, favicon)
+- [x] T019 [US1] 运行首次飞书内容同步测试: `node scripts/sync-feishu.js`,验证中英文文档是否正确同步到 `app/docs/` 和 `app/i18n/en/docusaurus-plugin-content-docs/current/`
+- [x] T020 [US1] 本地构建测试: `cd app && npm run build`,验证构建成功且生成 `build/zh/` 和 `build/en/` 两个语言版本
+- [x] T021 [US1] 本地预览测试: `cd app && npm run serve`,在浏览器中测试语言自动切换和手动切换功能
+- [x] T022 [US1] 验收测试: 按照 spec.md 第18-25行的5个验收场景逐一验证
 
 **Checkpoint**: 此时 User Story 1 应完全功能可用并可独立测试 - **这是MVP**
 
@@ -85,15 +85,15 @@
 
 ### Implementation for User Story 2
 
-- [ ] T023 [P] [US2] 创建 ProjectCard 组件 `app/src/components/ProjectCard/index.tsx`,接收 props: title, description, link, image, tags, status
-- [ ] T024 [P] [US2] 创建 ProjectCard 样式文件 `app/src/components/ProjectCard/styles.module.css`
-- [ ] T025 [P] [US2] 创建 HomepageFeatures 组件 `app/src/components/HomepageFeatures/index.tsx`,用于展示项目卡片列表,读取 `src/data/projects.json`
-- [ ] T026 [P] [US2] 创建 RecentPosts 组件 `app/src/components/RecentPosts/index.tsx`,获取最新5篇博文并显示(使用 Docusaurus 的 `useGlobalData` 或 `useBlogPosts` hook)
-- [ ] T027 [P] [US2] 在 `app/src/data/projects.json` 添加至少3个示例项目数据,包含中英文字段(参考 data-model.md 第119-143行)
-- [ ] T028 [US2] 修改 `app/src/pages/index.tsx` 首页,集成 HomepageFeatures 和 RecentPosts 组件,替换默认首页内容
-- [ ] T029 [US2] 在 `app/src/css/custom.css` 添加首页自定义样式,确保响应式布局(移动端和桌面端)
-- [ ] T030 [US2] 在飞书知识库中创建至少5篇测试博文(中英文各一份),运行同步脚本验证首页最新博文列表显示
-- [ ] T031 [US2] 验收测试: 按照 spec.md 第36-42行的5个验收场景逐一验证
+- [x] T023 [P] [US2] 创建 ProjectCard 组件 `app/src/components/ProjectCard/index.tsx`,接收 props: title, description, link, image, tags, status
+- [x] T024 [P] [US2] 创建 ProjectCard 样式文件 `app/src/components/ProjectCard/styles.module.css`
+- [x] T025 [P] [US2] 创建 HomepageFeatures 组件 `app/src/components/HomepageFeatures/index.tsx`,用于展示项目卡片列表,读取 `src/data/projects.json`
+- [x] T026 [P] [US2] 创建 RecentPosts 组件 `app/src/components/RecentPosts/index.tsx`,获取最新5篇博文并显示(使用 Docusaurus 的 `useGlobalData` 或 `useBlogPosts` hook)
+- [x] T027 [P] [US2] 在 `app/src/data/projects.json` 添加至少3个示例项目数据,包含中英文字段(参考 data-model.md 第119-143行)
+- [x] T028 [US2] 修改 `app/src/pages/index.tsx` 首页,集成 HomepageFeatures 和 RecentPosts 组件,替换默认首页内容
+- [x] T029 [US2] 在 `app/src/css/custom.css` 添加首页自定义样式,确保响应式布局(移动端和桌面端)
+- [x] T030 [US2] 在飞书知识库中创建至少5篇测试博文(中英文各一份),运行同步脚本验证首页最新博文列表显示
+- [x] T031 [US2] 验收测试: 按照 spec.md 第36-42行的5个验收场景逐一验证
 
 **Checkpoint**: 此时 User Stories 1 和 2 都应独立工作
 

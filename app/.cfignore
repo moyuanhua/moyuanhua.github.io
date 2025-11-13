@@ -1,0 +1,39 @@
+# Cloudflare Pages 忽略文件
+
+# 开发文件
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 日志
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 测试
+coverage/
+.nyc_output/
+
+# 临时文件
+*.tmp
+*.temp
+.DS_Store
+
+# Node modules (会在构建时重新安装)
+node_modules/
+
+# 构建输出 (会在构建时生成)
+build/
+.docusaurus/
+.cache/
+
+# 文档 (不需要部署)
+../specs/
+../TROUBLESHOOTING.md
+../FEISHU_SETUP.md

@@ -28,3 +28,50 @@
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+/* Homepage Custom Styles */
+.hero--primary {
+  background: linear-gradient(135deg, var(--ifm-color-primary) 0%, var(--ifm-color-primary-dark) 100%);
+  padding: 4rem 2rem;
+}
+
+@media screen and (max-width: 996px) {
+  .hero--primary {
+    padding: 2rem 1rem;
+  }
+
+  .hero__title {
+    font-size: 2rem;
+  }
+}
+
+/* Responsive Utilities */
+@media screen and (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+}
+
+/* Card Enhancements */
+.card {
+  height: 100%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  transition: all 0.2s;
+}
+
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Button Spacing */
+.button + .button {
+  margin-left: 0.5rem;
+}
+
+@media screen and (max-width: 576px) {
+  .button + .button {
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+}

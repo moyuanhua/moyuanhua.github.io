@@ -4,6 +4,7 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import HomepageFeatures from '@site/src/components/HomepageFeatures';
+import RecentPosts from '@site/src/components/RecentPosts';
 import Heading from '@theme/Heading';
 
 import styles from './index.module.css';
@@ -21,7 +22,12 @@ function HomepageHeader() {
           <Link
             className="button button--secondary button--lg"
             to="/docs/intro">
-            Docusaurus Tutorial - 5min ⏱️
+            开始阅读 →
+          </Link>
+          <Link
+            className="button button--outline button--secondary button--lg"
+            to="/blog">
+            查看博客
           </Link>
         </div>
       </div>
@@ -33,11 +39,12 @@ export default function Home(): ReactNode {
   const {siteConfig} = useDocusaurusContext();
   return (
     <Layout
-      title={`Hello from ${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />">
+      title={`欢迎来到 ${siteConfig.title}`}
+      description="技术博客与项目展示,分享前端、全栈开发经验和开源项目">
       <HomepageHeader />
       <main>
         <HomepageFeatures />
+        <RecentPosts />
       </main>
     </Layout>
   );
