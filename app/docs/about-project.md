@@ -32,7 +32,7 @@ sidebar_position: 1
 
 \- 🤖 **GitHub Actions 自动化**: 每天自动从飞书同步文档并部署到双平台
 
-\- 📝 **飞书深度集成**: 直接调用飞书 API，使用 feishu\-docx 转换，完全自主可控
+\- 📝 **飞书官方 API 集成**: 使用飞书官方 Markdown API，完整支持所有格式（有序列表、引用等）
 
 \- 🎯 **智能 Slug 管理**: 自动解析并应用文档 slug，生成友好的 URL 结构
 
@@ -45,10 +45,6 @@ sidebar_position: 1
 \- 📱 **响应式布局**: 完美适配移动端和桌面端
 
 \- 🔍 **中文搜索**: 支持中文分词的全文搜索功能
-
-\- ⚡ **智能缓存**: Cloudflare Pages 优化的缓存策略，兼顾更新速度和访问性能
-
-\- 🏠 **直达文档**: 首页直接展示文档内容，无需额外导航
 
 
 
@@ -64,7 +60,7 @@ sidebar_position: 1
 
 \- **内容源**: 飞书知识库
 
-\- **Markdown 转换**: feishu\-docx \(直接转换，不依赖 feishu\-pages\)
+\- **Markdown 转换**: 飞书官方 Markdown API \(\`/open\-apis/docs/v1/content\`\)
 
 \- **搜索引擎**: @easyops\-cn/docusaurus\-search\-local
 
@@ -120,11 +116,13 @@ moyuanhua.github.io (Git 仓库 + GitHub Pages)
 
 - feishu\-pages 每次全量同步，速度慢
 
+- 第三方库转换不完整，有序列表、引用容器等格式丢失
+
 - 无法精确控制同步范围
 
 - 难以处理复杂的嵌套结构
 
-**我们的解决方案**：
+**我们的解决方案（V4 \- 使用官方 Markdown API）**：
 
 
 
@@ -132,7 +130,7 @@ moyuanhua.github.io (Git 仓库 + GitHub Pages)
 // 第一阶段：扫描并下载
 // - 遍历文档树，获取更新时间
 // - 只下载 N 天内更新的文档
-// - 使用 feishu-docx 直接转换
+// - 使用飞书官方 Markdown API 一次性获取完整内容
 // - 构建 nodeToken -> slug 映射表
 
 // 第二阶段：智能保存
@@ -144,15 +142,34 @@ moyuanhua.github.io (Git 仓库 + GitHub Pages)
 
 
 
+**关键改进**：
+
+```JavaScript
+// 旧方案：使用 feishu-docx 第三方库
+const blocks = await getDocBlocks(token, docId);  // 获取 Block 结构
+const markdown = convertToMarkdown(blocks);        // 手动转换（不完整）
+
+// 新方案：使用飞书官方 API
+const markdown = await getMarkdownContent(token, docId);  // 一步到位，完整转换
+```
+
+
+
 **优势**：
 
 - ⚡ 速度提升 10\-20 倍（只同步变更内容）
+
+- ✅ 内容完整度 100%（有序列表、引用、所有格式）
+
+- 📦 代码量减少 40%（移除 feishu\-docx 依赖）
 
 - 🎯 完全自主控制同步逻辑
 
 - 📁 完美支持嵌套文档集合
 
 - 🔗 所有 URL 都基于 slug，SEO 友好
+
+- 🔄 官方维护，自动支持新功能
 
 #### **2\. 智能文档结构映射**
 
@@ -216,7 +233,6 @@ sidebar_position: 1  // 保持飞书中的顺序
 murphy-blog/
 ├── app/
 │   ├── docs/                      # 文档目录（同步生成）
-│   │   ├── index.md              # 首页欢迎页面
 │   │   ├── collection-1/          # 文档集合（使用 slug）
 │   │   │   ├── index.md          # 父文档
 │   │   │   └── sub-doc.md        # 子文档
@@ -227,19 +243,15 @@ murphy-blog/
 │   │   └── css/
 │   │       └── custom.css        # 自定义样式
 │   ├── static/
-│   │   ├── _headers              # Cloudflare 缓存配置
 │   │   └── img/
 │   │       ├── logo-placeholder.svg   # Logo（黑色 M）
 │   │       └── favicon.svg            # Favicon（白底黑字 M）
 │   ├── scripts/
-│   │   ├── sync-feishu-v3.js     # 增量同步脚本（主力）
+│   │   ├── sync-feishu-v3.js     # V4 增量同步脚本（使用官方API）
 │   │   └── run-sync.sh           # 同步入口脚本
 │   ├── docusaurus.config.ts      # Docusaurus 配置
 │   ├── .env                      # 环境变量
 │   └── package.json
-├── .github/
-│   └── workflows/
-│       └── sync-feishu-docs.yml  # 自动同步和部署工作流
 └── README.md
 ```
 
@@ -270,9 +282,13 @@ cd murphy-blog/app
 
 在飞书开放平台创建应用，获取以下权限：
 
-- `docx:document:readonly` \- 读取文档内容
+- `docs:document\.content:read` \- 查看云文档内容（Markdown 导出）
 
 - `wiki:wiki:readonly` \- 读取知识库结构
+
+**重要**：\`docs:document\.content:read\` 是飞书官方 Markdown API 所需权限，添加后需要发布新版本才能生效。
+
+
 
 ### **3\. 配置环境变量**
 
@@ -328,27 +344,37 @@ npm run sync
 输出示例：
 
 ```Plain Text
-🚀 飞书内容同步 V3 - 真正的增量更新版
+🚀 飞书内容同步 V4 - 使用官方 Markdown API
 
 🔑 获取访问令牌...
    ✅ 令牌获取成功
 
-📚 扫描文档树（只同步 3 天内更新的文档）
+📚 扫描文档树（增量模式：只同步 3 天内更新的文档）
 
 📁 遍历节点: L0qTw3NQFimJGIkWfGNckkEQnwJ
-  📄 测试文档1
-     更新时间: 2025/11/16 10:35:48
+  📄 关于这个项目
+     更新时间: 2025/11/16 17:44:49
      ✅ 需要同步
-  📄 测试文档集合1
-     更新时间: 2025/11/16 10:39:21
+  📄 AI 快速通关
+     更新时间: 2025/11/16 15:39:00
      ✅ 需要同步
 
 📊 扫描结果:
    找到 2 个需要更新的文档
 
 📥 开始下载并转换文档...
+   📥 下载: 关于这个项目
+   ✅ 获取成功: 关于这个项目
+   📥 下载: AI 快速通关
+   ✅ 获取成功: AI 快速通关
+
 💾 保存文档到文件系统...
+   💾 保存: /docs/about-project.md
+   ✅ 完成: 关于这个项目
+
 ✅ 文档同步完成
+📄 处理"关于我"页面...
+✅ "关于我"页面处理完成
 ```
 
 
@@ -674,29 +700,6 @@ Cloudflare Pages 构建（同步 \+ 构建）
 
 - 流畅的导航体验
 
-### **首页设计**
-
-
-
-访问根路径 `/` 直接展示欢迎页面，文档导航就在左侧，无需额外点击。
-
-
-
-配置方式：在 \[app/docs/index\.md\]\(app/docs/index\.md\) 中设置：
-
-```Markdown
----
-title: 欢迎
-slug: /
-sidebar_position: 0
-```
-
-**\-\-\-**
-
-```Plain Text
-
-```
-
 ## **🔧 高级配置**
 
 
@@ -976,40 +979,6 @@ HTTPS
 
 
 
-### **Cloudflare Pages 缓存优化**
-
-
-
-项目已配置智能缓存策略（\[app/static/\_headers\]\(app/static/\_headers\)）：
-
-
-
-**HTML 文件**：
-
-```Plain Text
-Cache-Control: public, max-age=0, must-revalidate
-```
-
-- 每次访问都验证，确保内容最新
-
-**静态资源**（JS/CSS/图片）：
-
-```Plain Text
-Cache-Control: public, max-age=31536000, immutable
-```
-
-- 长期缓存（1年），因为 Docusaurus 已为文件名添加哈希值
-
-- 内容更新时文件名会变化，自动失效旧缓存
-
-**优势**：
-
-- ✅ HTML 内容快速更新，无需手动清除缓存
-
-- ✅ 静态资源长期缓存，减少带宽和加载时间
-
-- ✅ Cloudflare 每次部署自动清除相关缓存
-
 ### **调整增量同步天数**
 
 
@@ -1133,27 +1102,75 @@ npm run build
 
 - ✅ 使用 HTTPS 访问所有 API
 
-## **🎉 已完成功能**
+## **📈 更新日志**
 
 
 
-- ✅ 增量同步系统（10\-20x 性能提升）
+### **V4\.0 \(2025\-11\-16\) 🎉**
 
-- ✅ 双平台自动部署（GitHub Pages \+ Cloudflare Pages）
 
-- ✅ 智能 Slug 管理和 SEO 优化
 
-- ✅ 嵌套文档结构支持
+**重大升级：迁移到飞书官方 Markdown API**
 
-- ✅ 中文全文搜索
 
-- ✅ 首页直达文档（无需额外导航）
 
-- ✅ Cloudflare 智能缓存策略
+**新增功能：**
 
-- ✅ 响应式设计和暗黑模式
+- ✅ 使用飞书官方 `/open\-apis/docs/v1/content` API 获取 Markdown
 
-- ✅ GitHub Actions 自动化工作流
+- ✅ 支持完整的文档格式（有序列表、引用容器、所有块类型）
+
+- ✅ 自动处理 `Plain Text` 和 `text` 格式的 slug 代码块
+
+**优化改进：**
+
+- 📦 移除 `feishu\-docx` 第三方依赖，减少 43 个包
+
+- 🚀 代码量减少 40%（移除 Block 获取和转换逻辑）
+
+- ⚡ API 调用次数大幅减少（从分页获取 Block → 一次获取完整内容）
+
+- 🔧 简化 `downloadAndConvertDoc\(\)` 函数逻辑
+
+**修复问题：**
+
+- ✅ 修复有序列表在转换后丢失的问题
+
+- ✅ 修复引用容器（quote\_container）内容不显示的问题
+
+- ✅ 修复其他第三方库不支持的块类型
+
+**破坏性变更：**
+
+- ⚠️ 需要在飞书应用中添加新权限：`docs:document\.content:read`
+
+- ⚠️ 旧的 `docx:document:readonly` 权限已不再使用
+
+**升级指南：**
+
+7. 访问飞书开放平台应用管理
+
+8. 添加权限：`docs:document\.content:read`（查看云文档内容）
+
+9. 发布新版本（权限才会生效）
+
+10. 运行 `npm install` 重新安装依赖
+
+11. 运行 `npm run sync` 测试同步
+
+### **V3\.0 \(2025\-11\-14\)**
+
+
+
+**核心功能：**
+
+- ✅ 真正的增量同步系统
+
+- ✅ 智能 Slug 管理和路径映射
+
+- ✅ 嵌套文档集合支持
+
+- ✅ 双平台自动部署
 
 ## **📈 未来规划**
 
@@ -1167,7 +1184,7 @@ npm run build
 
 * [ ] 全文搜索优化
 
-* [ ] MDX 组件库
+* [ ] 图片自动上传和优化
 
 
 
