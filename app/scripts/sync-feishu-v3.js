@@ -172,6 +172,42 @@ function shouldUpdate(updateTime, days = 3) {
   return diffDays <= days;
 }
 
+// 清理 Markdown 中可能导致 MDX 编译错误的内容
+function cleanMarkdown(markdown) {
+  if (!markdown) return markdown;
+
+  let cleaned = markdown;
+
+  // 1. 清理表格中的列表标签（特别处理）
+  // 移除 <td> 内的 <ul><li> 结构（常见于飞书表格转换错误）
+  cleaned = cleaned.replace(/<td>([^<]*)<ul>\s*<li>\s*<\/td>/gi, '<td>$1-</td>');
+  cleaned = cleaned.replace(/<td>([^<]*)<ul>\s*<li>[^<]*<\/li>\s*<\/ul>([^<]*)<\/td>/gi, '<td>$1$2</td>');
+
+  // 2. 移除不完整的 HTML 标签（常见于飞书转换）
+  cleaned = cleaned.replace(/<(ul|ol)([^>]*)>\s*<li>\s*$/gim, '');
+  cleaned = cleaned.replace(/<\/(ul|ol)>\s*$/gim, '');
+
+  // 3. 移除孤立的闭合标签
+  cleaned = cleaned.replace(/<\/(ul|ol|li|div|span)>/gi, '');
+
+  // 4. 修复常见的 HTML 实体
+  cleaned = cleaned.replace(/&nbsp;/g, ' ');
+  cleaned = cleaned.replace(/&lt;/g, '<');
+  cleaned = cleaned.replace(/&gt;/g, '>');
+  cleaned = cleaned.replace(/&amp;/g, '&');
+
+  // 5. 移除空的 HTML 注释
+  cleaned = cleaned.replace(/<!--\s*-->/g, '');
+
+  // 6. 确保代码块正确闭合
+  const codeBlockCount = (cleaned.match(/```/g) || []).length;
+  if (codeBlockCount % 2 !== 0) {
+    cleaned += '\n```\n';
+  }
+
+  return cleaned;
+}
+
 // 从 markdown 内容中解析并移除 slug
 function parseAndRemoveSlug(markdown) {
   // 匹配代码块中的 slug: xxx
@@ -310,6 +346,9 @@ async function downloadAndConvertDoc(token, doc) {
       console.log(`   ⚠️  转换失败，跳过: ${doc.title}`);
       return null;
     }
+
+    // 清理可能导致 MDX 编译错误的 HTML
+    markdown = cleanMarkdown(markdown);
 
     // 解析并移除 slug
     const { slug, markdown: cleanedMarkdown } = parseAndRemoveSlug(markdown);
