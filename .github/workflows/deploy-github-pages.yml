@@ -35,17 +35,15 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: app/package-lock.json
+          cache-dependency-path: './app/package-lock.json'
 
       - name: 安装依赖
-        run: |
-          cd app
-          npm ci
+        working-directory: ./app
+        run: npm ci
 
       - name: 构建站点
-        run: |
-          cd app
-          npm run build
+        working-directory: ./app
+        run: npm run build
         env:
           SKIP_FEISHU_SYNC: true
           NODE_ENV: production

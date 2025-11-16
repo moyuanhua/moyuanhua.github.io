@@ -23,16 +23,15 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: app/package-lock.json
+          cache-dependency-path: './app/package-lock.json'
 
       - name: 安装依赖
-        run: |
-          cd app
-          npm ci
+        working-directory: ./app
+        run: npm ci
 
       - name: 创建 .env 文件
+        working-directory: ./app
         run: |
-          cd app
           cat > .env << EOF
           FEISHU_APP_ID=${{ secrets.FEISHU_APP_ID }}
           FEISHU_APP_SECRET=${{ secrets.FEISHU_APP_SECRET }}
@@ -44,9 +43,8 @@ jobs:
           EOF
 
       - name: 同步飞书文档
-        run: |
-          cd app
-          npm run sync
+        working-directory: ./app
+        run: npm run sync
 
       - name: 检查是否有变更
         id: check_changes
