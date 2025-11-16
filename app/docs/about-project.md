@@ -8,9 +8,19 @@ sidebar_position: 1
 
 基于 Docusaurus 和飞书知识库的现代化技术文档系统
 
+## <b>🌐 在线访问</b>
+
+- <b>GitHub Pages</b>: https://moyuanhua.github.io
+
+- <b>Cloudflare Pages</b>: https://blog.shopifytools.work
+
+两个站点内容完全相同，自动同步部署！
+
 ## <b>✨ 核心特性</b>
 
 - 🚀 <b>真正的增量同步</b>: 智能检测文档更新时间，只同步变更内容，大幅提升同步速度
+
+- 🤖 <b>GitHub Actions 自动化</b>: 每天自动从飞书同步文档并部署到双平台
 
 - 📝 <b>飞书深度集成</b>: 直接调用飞书 API，使用 feishu-docx 转换，完全自主可控
 
@@ -26,6 +36,10 @@ sidebar_position: 1
 
 - 🔍 <b>中文搜索</b>: 支持中文分词的全文搜索功能
 
+- ⚡ <b>智能缓存</b>: Cloudflare Pages 优化的缓存策略，兼顾更新速度和访问性能
+
+- 🏠 <b>直达文档</b>: 首页直接展示文档内容，无需额外导航
+
 ## <b>🏗️ 技术架构</b>
 
 ### <b>核心技术栈</b>
@@ -39,6 +53,35 @@ sidebar_position: 1
 - <b>搜索引擎</b>: @easyops-cn/docusaurus-search-local
 
 - <b>语言</b>: TypeScript + React 19 + Node.js 20+
+
+- <b>CI/CD</b>: GitHub Actions
+
+- <b>部署平台</b>: GitHub Pages + Cloudflare Pages
+
+### <b>部署架构</b>
+
+```text
+飞书知识库 (内容管理)
+    ↓
+GitHub Actions (每天 9:00 自动运行)
+    ├─ 同步飞书文档
+    ├─ 提交到 Git
+    ├─ 构建站点
+    └─ 部署到 GitHub Pages
+        ↓
+moyuanhua.github.io (Git 仓库 + GitHub Pages)
+    ↓
+    ├─→ moyuanhua.github.io (GitHub Pages)
+    │
+    └─→ blog.shopifytools.work (Cloudflare Pages - 监听 Git 推送)
+```
+
+<b>优势</b>：
+
+- ✅ 一次编辑，双平台同步
+- ✅ GitHub Pages 免费，无需配置域名
+- ✅ Cloudflare Pages 全球 CDN，速度更快
+- ✅ 两个备份，高可用性
 
 ### <b>创新技术方案</b>
 
@@ -119,16 +162,18 @@ sidebar_position: 1  // 保持飞书中的顺序
 murphy-blog/
 ├── app/
 │   ├── docs/                      # 文档目录（同步生成）
+│   │   ├── index.md              # 首页欢迎页面
 │   │   ├── collection-1/          # 文档集合（使用 slug）
 │   │   │   ├── index.md          # 父文档
 │   │   │   └── sub-doc.md        # 子文档
 │   │   └── standalone.md         # 独立文档
 │   ├── src/
 │   │   ├── pages/                # 页面
-│   │   │   └── about.md          # 关于我页面
+│   │   │   └── about.md          # 关于我页��
 │   │   └── css/
 │   │       └── custom.css        # 自定义样式
 │   ├── static/
+│   │   ├── _headers              # Cloudflare 缓存配置
 │   │   └── img/
 │   │       ├── logo-placeholder.svg   # Logo（黑色 M）
 │   │       └── favicon.svg            # Favicon（白底黑字 M）
@@ -138,6 +183,9 @@ murphy-blog/
 │   ├── docusaurus.config.ts      # Docusaurus 配置
 │   ├── .env                      # 环境变量
 │   └── package.json
+├── .github/
+│   └── workflows/
+│       └── sync-feishu-docs.yml  # 自动同步和部署工作流
 └── README.md
 ```
 
@@ -234,20 +282,43 @@ npm start
 
 ## <b>📝 内容管理工作流</b>
 
-### <b>在飞书中管理内容</b>
+### <b>方式 1：自动同步（推荐）✨</b>
 
-1. <b>文档组织</b>：在飞书知识库中创建文档和文档集合
+<b>GitHub Actions 每天自动同步飞书文档到 Git</b>
 
-2. <b>添加 Slug</b>：在文档开头添加代码块指定 slug
+1. <b>在飞书中编辑文档</b>：在飞书知识库中创建/更新文档
+
+2. <b>自动同步</b>：GitHub Actions 每天北京时间 9:00 自动同步
+
+3. <b>自动部署</b>：Cloudflare Pages 检测到 Git 变更后自动部署
+
+<b>配置步骤</b>：
+
+在 GitHub 仓库的 Settings → Secrets and variables → Actions 中添加：
 
 ```text
-```text
-
+FEISHU_APP_ID=cli_xxxxxxxxxxxx
+FEISHU_APP_SECRET=xxxxxxxxxxxxxx
+FEISHU_SPACE_ID=7560180515966484484
+FEISHU_DOCS_NODE_ID=L0qTw3NQFimJGIkWfGNckkEQnwJ
+FEISHU_ABOUT_DOC_ID=DKvmwNWVOiYA6KklWcsc1gHInKg
 ```
 
-3. <b>保存发布</b>：飞书中的修改会自动记录更新时间
+<b>手动触发同步</b>：
 
-### <b>同步到网站</b>
+在 GitHub 仓库 Actions 页面 → "同步飞书文档" → "Run workflow"
+
+### <b>方式 2：本地手动同步</b>
+
+<b>适合本地开发和测试</b>
+
+1. <b>在飞书中管理内容</b>
+
+- 文档组织：在飞书知识库中创建文档和文档集合
+- 添加 Slug：在文档开头添加代码块指定 slug
+    - 保存发布：飞书中的修改会自动记录更新时间
+
+2. <b>同步到本地</b>
 
 ```bash
 # 增量同步（只同步最近 3 天更新的文档）
@@ -346,22 +417,149 @@ npm run build
 - 自适应亮/暗主题
 - 流畅的导航体验
 
+### <b>首页设计</b>
+
+访问根路径 `/` 直接展示欢迎页面，文档导航就在左侧，无需额外点击。
+
+配置方式：在 [app/docs/index.md](app/docs/index.md) 中设置：
+
+```md
+---
+title: 欢迎
+slug: /
+sidebar_position: 0
+```
+
+<b>---</b>
+
+```text
+
+```
+
 ## <b>🔧 高级配置</b>
+
+### <b>GitHub Pages 部署设置</b>
+
+<b>在 GitHub 仓库中启用 GitHub Pages</b>：
+
+1. 进入仓库 Settings → Pages
+2. Source 选择 "GitHub Actions"
+3. 保存后会自动部署
+
+<b>无需额外配置</b>！推送代码后会自动触发部署。
+
+访问地址：`https://moyuanhua.github.io`
+
+### <b>Cloudflare Pages 部署设置</b>
+
+<b>连接 GitHub 仓库</b>：
+
+1. 登录 Cloudflare Dashboard
+2. Pages → 创建项目 → 连接到 Git
+3. 选择 `moyuanhua/moyuanhua.github.io` 仓库
+
+<b>构建配置</b>：
+
+<table>
+<colgroup>
+<col width="200"/>
+<col width="200"/>
+</colgroup>
+<tbody>
+<tr><td><p>配置项</p></td><td><p>值</p></td></tr>
+<tr><td><p>框架预设</p></td><td><p>None</p></td></tr>
+<tr><td><p>构建命令</p></td><td><p><code>cd app && npm install && npm run build</code></p></td></tr>
+<tr><td><p>构建输出目录</p></td><td><p><code>app/build</code></p></td></tr>
+<tr><td><p>根目录</p></td><td><p><code>/</code></p></td></tr>
+</tbody>
+</table>
+
+<b>环境变量设置</b>：
+
+```bash
+SKIP_FEISHU_SYNC=true
+NODE_ENV=production
+SITE_URL=https://blog.shopifytools.work
+BASE_URL=/
+```
+
+保存后会自动部署，每次 Git 推送都会触发自动部署。
+
+访问地址：`https://blog.shopifytools.work`（或你的自定义域名）
+
+### <b>双平台对比</b>
+
+<table>
+<colgroup>
+<col width="200"/>
+<col width="200"/>
+<col width="200"/>
+</colgroup>
+<tbody>
+<tr><td><p>特性</p></td><td><p>GitHub Pages</p></td><td><p>Cloudflare Pages</p></td></tr>
+<tr><td><p>部署速度</p></td><td><p>~1-2 分钟</p></td><td><p>~30-60 秒</p></td></tr>
+<tr><td><p>CDN</p></td><td><p>GitHub CDN</p></td><td><p>Cloudflare 全球 CDN</p></td></tr>
+<tr><td><p>访问速度（国内）</p></td><td><p>较慢</p></td><td><p>快</p></td></tr>
+<tr><td><p>访问速度（国外）</p></td><td><p>快</p></td><td><p>很快</p></td></tr>
+<tr><td><p>自定义域名</p></td><td><p>支持</p></td><td><p>支持</p></td></tr>
+<tr><td><p>HTTPS</p></td><td><p>自动</p></td><td><p>自动</p></td></tr>
+<tr><td><p>成本</p></td><td><p>免费</p></td><td><p>免费</p></td></tr>
+</tbody>
+</table>
+
+<b>推荐</b>：两个都部署，国内用户访问 Cloudflare，国外用户访问 GitHub Pages。
+
+### <b>Cloudflare Pages 缓存优化</b>
+
+项目已配置智能缓存策略（[app/static/_headers](app/static/_headers)）：
+
+<b>HTML 文件</b>：
+
+```text
+Cache-Control: public, max-age=0, must-revalidate
+```
+
+- 每次访问都验证，确保内容最新
+
+<b>静态资源</b>（JS/CSS/图片）：
+
+```text
+Cache-Control: public, max-age=31536000, immutable
+```
+
+- 长期缓存（1年），因为 Docusaurus 已为文件名添加哈希值
+- 内容更新时文件名会变化，自动失效旧缓存
+
+<b>优势</b>：
+
+- ✅ HTML 内容快速更新，无需手动清除缓存
+- ✅ 静态资源长期缓存，减少带宽和加载时间
+- ✅ Cloudflare 每次部署自动清除相关缓存
 
 ### <b>调整增量同步天数</b>
 
 编辑 `.env`：
 
 ```bash
-# 只同步 7 天内更新的文档
+# 本地开发：3-7 天
+FEISHU_INCREMENTAL_DAYS=3
+
+# GitHub Actions：7 天（在 workflow 文件中设置）
 FEISHU_INCREMENTAL_DAYS=7
+
+# 全量同步（首次或需要完整更新时）
+FEISHU_INCREMENTAL_DAYS=0
 ```
 
-### <b>跳过同步（使用现有内容）</b>
+### <b>GitHub Actions 定时任务配置</b>
 
-```bash
-# 在 CI/CD 环境中跳过同步
-SKIP_FEISHU_SYNC=true
+编辑 `.github/workflows/sync-feishu-docs.yml`：
+
+```yaml
+# 修改定时执行时间（cron 格式，UTC 时间）
+schedule:
+  - cron: '0 1 * * *'  # 每天 UTC 1:00 (北京时间 9:00)
+  - cron: '0 13 * * *' # 每天 UTC 13:00 (北京时间 21:00)
 ```
 
 ### <b>自定义主题颜色</b>
@@ -424,6 +622,18 @@ npm run build
 - ✅ 构建时敏感信息不会泄露到静态文件
 - ✅ 使用 HTTPS 访问所有 API
 
+## <b>🎉 已完成功能</b>
+
+- ✅ 增量同步系统（10-20x 性能提升）
+- ✅ 双平台自动部署（GitHub Pages + Cloudflare Pages）
+- ✅ 智能 Slug 管理和 SEO 优化
+- ✅ 嵌套文档结构支持
+- ✅ 中文全文搜索
+- ✅ 首页直达文档（无需额外导航）
+- ✅ Cloudflare 智能缓存策略
+- ✅ 响应式设计和暗黑模式
+- ✅ GitHub Actions 自动化工作流
+
 ## <b>📈 未来规划</b>
 
 - [ ] 支持多语言文档
@@ -434,7 +644,7 @@ npm run build
 
 - [ ] 全文搜索优化
 
-- [ ] 自动化 CI/CD 流程
+- [ ] MDX 组件库
 
 ## <b>📄 License</b>
 
@@ -454,6 +664,3 @@ MIT
 <b>Built with ❤️ using Docusaurus & Feishu</b>
 
 <em>智能增量同步 | 完美 SEO | 极简设计</em>
-
-
-```
