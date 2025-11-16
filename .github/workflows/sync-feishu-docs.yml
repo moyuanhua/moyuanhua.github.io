@@ -60,6 +60,7 @@ jobs:
           FEISHU_ABOUT_DOC_ID=${{ secrets.FEISHU_ABOUT_DOC_ID }}
           FEISHU_INCREMENTAL_DAYS=7
           SKIP_FEISHU_SYNC=false
+          SITE_URL=https://moyuanhua.github.io
           EOF
 
       - name: 同步飞书文档
