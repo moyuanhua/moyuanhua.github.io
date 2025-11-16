@@ -4,7 +4,7 @@ User-agent: *
 Allow: /
 
 # Sitemap 位置
-Sitemap: https://shopify.ijike.wang/sitemap.xml
+Sitemap: https://moyuanhua.github.io/sitemap.xml
 
 # Google 搜索引擎
 User-agent: Googlebot
