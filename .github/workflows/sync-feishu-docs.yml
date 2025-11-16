@@ -1,0 +1,77 @@
+name: 同步飞书文档
+
+on:
+  # 每天北京时间 9:00 (UTC 1:00) 自动运行
+  schedule:
+    - cron: '0 1 * * *'
+
+  # 支持手动触发
+  workflow_dispatch:
+
+jobs:
+  sync-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: app/package-lock.json
+
+      - name: 安装依赖
+        run: |
+          cd app
+          npm ci
+
+      - name: 创建 .env 文件
+        run: |
+          cd app
+          cat > .env << EOF
+          FEISHU_APP_ID=${{ secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET=${{ secrets.FEISHU_APP_SECRET }}
+          FEISHU_SPACE_ID=${{ secrets.FEISHU_SPACE_ID }}
+          FEISHU_DOCS_NODE_ID=${{ secrets.FEISHU_DOCS_NODE_ID }}
+          FEISHU_ABOUT_DOC_ID=${{ secrets.FEISHU_ABOUT_DOC_ID }}
+          FEISHU_INCREMENTAL_DAYS=7
+          SKIP_FEISHU_SYNC=false
+          EOF
+
+      - name: 同步飞书文档
+        run: |
+          cd app
+          npm run sync
+
+      - name: 检查是否有变更
+        id: check_changes
+        run: |
+          if [[ -n $(git status -s app/docs app/src/pages/about.md) ]]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "📝 检测到文档变更"
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "✅ 文档无变更"
+          fi
+
+      - name: 提交变更
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add app/docs app/src/pages/about.md
+          git commit -m "docs: 自动同步飞书文档 $(date '+%Y-%m-%d %H:%M:%S')"
+          git push
+
+      - name: 完成
+        run: |
+          if [[ "${{ steps.check_changes.outputs.has_changes }}" == "true" ]]; then
+            echo "✅ 文档已同步并提交"
+          else
+            echo "ℹ️ 无需更新"
+          fi

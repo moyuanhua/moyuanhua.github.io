@@ -15,9 +15,10 @@ const config: Config = {
   },
 
   // Set the production url of your site here
-  url: 'https://moyuanhua.github.io',
+  // 支持环境变量配置，默认使用 GitHub Pages
+  url: process.env.SITE_URL || 'https://moyuanhua.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
-  baseUrl: '/',
+  baseUrl: process.env.BASE_URL || '/',
 
   // GitHub pages deployment config.
   organizationName: 'moyuanhua', // Usually your GitHub org/user name.

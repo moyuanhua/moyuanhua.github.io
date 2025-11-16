@@ -2,9 +2,17 @@
 
 基于 Docusaurus 和飞书知识库的现代化技术文档系统
 
+## 🌐 在线访问
+
+- **GitHub Pages**: https://moyuanhua.github.io
+- **Cloudflare Pages**: https://blog.shopifytools.work
+
+两个站点内容完全相同，自动同步部署！
+
 ## ✨ 核心特性
 
 - 🚀 **真正的增量同步**: 智能检测文档更新时间，只同步变更内容，大幅提升同步速度
+- 🤖 **GitHub Actions 自动化**: 每天自动从飞书同步文档并部署到双平台
 - 📝 **飞书深度集成**: 直接调用飞书 API，使用 feishu-docx 转换，完全自主可控
 - 🎯 **智能 Slug 管理**: 自动解析并应用文档 slug，生成友好的 URL 结构
 - 📁 **嵌套文档支持**: 完美处理文档集合的父子关系，保持层级结构
@@ -22,6 +30,34 @@
 - **Markdown 转换**: feishu-docx (直接转换，不依赖 feishu-pages)
 - **搜索引擎**: @easyops-cn/docusaurus-search-local
 - **语言**: TypeScript + React 19 + Node.js 20+
+- **CI/CD**: GitHub Actions
+- **部署平台**: GitHub Pages + Cloudflare Pages
+
+### 部署架构
+
+```
+飞书知识库 (内容管理)
+    ↓
+GitHub Actions (每天 9:00 自动运行)
+    ├─ 同步飞书文档
+    └─ 提交到 Git
+        ↓
+moyuanhua.github.io (Git 仓库)
+    ↓
+    ├─→ GitHub Pages        (自动部署)
+    │       ↓
+    │   moyuanhua.github.io
+    │
+    └─→ Cloudflare Pages    (自动部署)
+            ↓
+        blog.shopifytools.work
+```
+
+**优势**：
+- ✅ 一次编辑，双平台同步
+- ✅ GitHub Pages 免费，无需配置域名
+- ✅ Cloudflare Pages 全球 CDN，速度更快
+- ✅ 两个备份，高可用性
 
 ### 创新技术方案
 
@@ -213,18 +249,43 @@ npm start
 
 ## 📝 内容管理工作流
 
-### 在飞书中管理内容
+### 方式 1：自动同步（推荐）✨
 
-1. **文档组织**：在飞书知识库中创建文档和文档集合
-2. **添加 Slug**：在文档开头添加代码块指定 slug
-   ```
-   ```text
-   slug: my-custom-url
-   ```
-   ```
-3. **保存发布**：飞书中的修改会自动记录更新时间
+**GitHub Actions 每天自动同步飞书文档到 Git**
 
-### 同步到网站
+1. **在飞书中编辑文档**：在飞书知识库中创建/更新文档
+2. **自动同步**：GitHub Actions 每天北京时间 9:00 自动同步
+3. **自动部署**：Cloudflare Pages 检测到 Git 变更后自动部署
+
+**配置步骤**：
+
+在 GitHub 仓库的 Settings → Secrets and variables → Actions 中添加：
+
+```
+FEISHU_APP_ID=cli_xxxxxxxxxxxx
+FEISHU_APP_SECRET=xxxxxxxxxxxxxx
+FEISHU_SPACE_ID=7560180515966484484
+FEISHU_DOCS_NODE_ID=L0qTw3NQFimJGIkWfGNckkEQnwJ
+FEISHU_ABOUT_DOC_ID=DKvmwNWVOiYA6KklWcsc1gHInKg
+```
+
+**手动触发同步**：
+
+在 GitHub 仓库 Actions 页面 → "同步飞书文档" → "Run workflow"
+
+### 方式 2：本地手动同步
+
+**适合本地开发和测试**
+
+1. **在飞书中管理内容**
+   - 文档组织：在飞书知识库中创建文档和文档集合
+   - 添加 Slug：在文档开头添加代码块指定 slug
+     ```text
+     slug: my-custom-url
+     ```
+   - 保存发布：飞书中的修改会自动记录更新时间
+
+2. **同步到本地**
 
 ```bash
 # 增量同步（只同步最近 3 天更新的文档）
@@ -302,20 +363,86 @@ npm run build
 
 ## 🔧 高级配置
 
+### GitHub Pages 部署设置
+
+**在 GitHub 仓库中启用 GitHub Pages**：
+
+1. 进入仓库 Settings → Pages
+2. Source 选择 "GitHub Actions"
+3. 保存后会自动部署
+
+**无需额外配置**！推送代码后会自动触发部署。
+
+访问地址：`https://moyuanhua.github.io`
+
+### Cloudflare Pages 部署设置
+
+**连接 GitHub 仓库**：
+
+1. 登录 Cloudflare Dashboard
+2. Pages → 创建项目 → 连接到 Git
+3. 选择 `moyuanhua/moyuanhua.github.io` 仓库
+
+**构建配置**：
+
+| 配置项 | 值 |
+|--------|-----|
+| 框架预设 | None |
+| 构建命令 | `cd app && npm install && npm run build` |
+| 构建输出目录 | `app/build` |
+| 根目录 | `/` |
+
+**环境变量设置**：
+
+```bash
+SKIP_FEISHU_SYNC=true
+NODE_ENV=production
+SITE_URL=https://blog.shopifytools.work
+BASE_URL=/
+```
+
+保存后会自动部署，每次 Git 推送都会触发自动部署。
+
+访问地址：`https://blog.shopifytools.work`（或你的自定义域名）
+
+### 双平台对比
+
+| 特性 | GitHub Pages | Cloudflare Pages |
+|------|-------------|------------------|
+| 部署速度 | ~1-2 分钟 | ~30-60 秒 |
+| CDN | GitHub CDN | Cloudflare 全球 CDN |
+| 访问速度（国内） | 较慢 | 快 |
+| 访问速度（国外） | 快 | 很快 |
+| 自定义域名 | 支持 | 支持 |
+| HTTPS | 自动 | 自动 |
+| 成本 | 免费 | 免费 |
+
+**推荐**：两个都部署，国内用户访问 Cloudflare，国外用户访问 GitHub Pages。
+
 ### 调整增量同步天数
 
 编辑 `.env`：
 
 ```bash
-# 只同步 7 天内更新的文档
+# 本地开发：3-7 天
+FEISHU_INCREMENTAL_DAYS=3
+
+# GitHub Actions：7 天（在 workflow 文件中设置）
 FEISHU_INCREMENTAL_DAYS=7
+
+# 全量同步（首次或需要完整更新时）
+FEISHU_INCREMENTAL_DAYS=0
 ```
 
-### 跳过同步（使用现有内容）
+### GitHub Actions 定时任务配置
 
-```bash
-# 在 CI/CD 环境中跳过同步
-SKIP_FEISHU_SYNC=true
+编辑 `.github/workflows/sync-feishu-docs.yml`：
+
+```yaml
+# 修改定时执行时间（cron 格式，UTC 时间）
+schedule:
+  - cron: '0 1 * * *'  # 每天 UTC 1:00 (北京时间 9:00)
+  - cron: '0 13 * * *' # 每天 UTC 13:00 (北京时间 21:00)
 ```
 
 ### 自定义主题颜色

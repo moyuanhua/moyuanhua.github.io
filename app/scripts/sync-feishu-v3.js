@@ -32,7 +32,8 @@ const CONFIG = {
   spaceId: process.env.FEISHU_SPACE_ID,
   docsNodeId: process.env.FEISHU_DOCS_NODE_ID || 'L0qTw3NQFimJGIkWfGNckkEQnwJ',
   aboutDocId: process.env.FEISHU_ABOUT_DOC_ID || 'DKvmwNWVOiYA6KklWcsc1gHInKg',
-  incrementalDays: parseInt(process.env.FEISHU_INCREMENTAL_DAYS || '3'),
+  // 0 表示全量同步，>0 表示增量同步（N天内更新的文档）
+  incrementalDays: parseInt(process.env.FEISHU_INCREMENTAL_DAYS || '0'),
   skipSync: process.env.SKIP_FEISHU_SYNC === 'true',
 };
 
@@ -418,7 +419,11 @@ async function main() {
     const token = await getTenantAccessToken();
 
     // 1. 遍历文档树，找出需要更新的文档
-    console.log(`📚 扫描文档树（只同步 ${CONFIG.incrementalDays} 天内更新的文档）\n`);
+    if (CONFIG.incrementalDays === 0) {
+      console.log(`📚 扫描文档树（全量同步模式）\n`);
+    } else {
+      console.log(`📚 扫描文档树（增量模式：只同步 ${CONFIG.incrementalDays} 天内更新的文档）\n`);
+    }
     const docsToUpdate = await traverseDocTree(token, CONFIG.spaceId, CONFIG.docsNodeId);
 
     console.log(`\n📊 扫描结果:`);
