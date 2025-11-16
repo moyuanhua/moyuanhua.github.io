@@ -1,26 +1,25 @@
 #!/usr/bin/env node
 
 /**
- * 飞书内容同步脚本 V3 - 真正的增量更新版
+ * 飞书内容同步脚本 V4 - 使用官方 Markdown API
  *
  * 功能：
  * 1. 扫描飞书知识库文档树
  * 2. 判断哪些文档需要更新(基于更新时间)
  * 3. 只下载需要更新的文档
- * 4. 使用 feishu-docx 转换为 Markdown
+ * 4. 使用飞书官方 Markdown API 直接获取内容
  * 5. 保存到本地
  */
 
 const path = require('path');
 const fs = require('fs');
 const https = require('https');
-const { MarkdownRenderer } = require('feishu-docx');
 require('dotenv').config({
   path: path.resolve(__dirname, '../.env'),
   override: true
 });
 
-console.log('🚀 飞书内容同步 V3 - 真正的增量更新版\n');
+console.log('🚀 飞书内容同步 V4 - 使用官方 Markdown API\n');
 
 // ============================================
 // 配置
@@ -119,46 +118,22 @@ async function getWikiNodes(token, spaceId, parentNodeToken = null) {
   return result.data;
 }
 
-// 获取文档所有块(Block)
-async function getDocBlocks(token, documentId) {
+// 使用官方 API 获取 Markdown 内容
+async function getMarkdownContent(token, docToken) {
   const options = {
     hostname: 'open.feishu.cn',
-    path: `/open-apis/docx/v1/documents/${documentId}/blocks?page_size=500`,
+    path: `/open-apis/docs/v1/content?doc_token=${docToken}&doc_type=docx&content_type=markdown&lang=zh`,
     method: 'GET',
     headers: { 'Authorization': `Bearer ${token}` }
   };
 
-  const allBlocks = [];
-  let pageToken = null;
+  const result = await httpsRequest(options);
 
-  do {
-    const requestPath = pageToken
-      ? `/open-apis/docx/v1/documents/${documentId}/blocks?page_size=500&page_token=${pageToken}`
-      : `/open-apis/docx/v1/documents/${documentId}/blocks?page_size=500`;
+  if (result.code !== 0) {
+    throw new Error(`获取文档内容失败 ${result.code}: ${result.msg}`);
+  }
 
-    const options = {
-      hostname: 'open.feishu.cn',
-      path: requestPath,
-      method: 'GET',
-      headers: { 'Authorization': `Bearer ${token}` }
-    };
-
-    const result = await httpsRequest(options);
-
-    if (result.code !== 0) {
-      throw new Error(`获取文档块失败 ${result.code}: ${result.msg}`);
-    }
-
-    allBlocks.push(...(result.data.items || []));
-    pageToken = result.data.has_more ? result.data.page_token : null;
-
-    // API 限流
-    if (pageToken) {
-      await new Promise(resolve => setTimeout(resolve, 100));
-    }
-  } while (pageToken);
-
-  return allBlocks;
+  return result.data.content;
 }
 
 // 检查文档是否需要更新（N天内更新过）
@@ -211,42 +186,20 @@ function cleanMarkdown(markdown) {
 
 // 从 markdown 内容中解析并移除 slug
 function parseAndRemoveSlug(markdown) {
-  // 匹配代码块中的 slug: xxx
-  const slugMatch = markdown.match(/```(?:text)?\s*slug:\s*(\S+)\s*```/);
+  // 匹配代码块中的 slug: xxx (支持 Plain Text 或 text)
+  const slugMatch = markdown.match(/```(?:Plain Text|text)?\s*slug:\s*(\S+)\s*```/i);
 
   if (slugMatch) {
     const slug = slugMatch[1];
     // 从 markdown 中移除这个代码块
-    const cleanedMarkdown = markdown.replace(/```(?:text)?\s*slug:\s*\S+\s*```\s*/g, '').trim();
+    const cleanedMarkdown = markdown.replace(/```(?:Plain Text|text)?\s*slug:\s*\S+\s*```\s*/gi, '').trim();
     return { slug, markdown: cleanedMarkdown };
   }
 
   return { slug: null, markdown };
 }
 
-// 使用 feishu-docx 转换为 Markdown
-function convertToMarkdown(blocks, documentId) {
-  try {
-    // feishu-docx 需要的数据格式
-    const docxData = {
-      document: {
-        document_id: documentId,
-        revision_id: 1,
-        title: '',
-      },
-      blocks: blocks
-    };
-
-    // 创建 MarkdownRenderer 实例并渲染
-    const renderer = new MarkdownRenderer(docxData);
-    const markdown = renderer.parse();
-
-    return markdown;
-  } catch (error) {
-    console.error(`   ⚠️  转换 Markdown 失败: ${error.message}`);
-    return null;
-  }
-}
+// 注意：convertToMarkdown 函数已被移除，现在直接使用官方 API 获取 Markdown
 
 // 生成 Docusaurus 前置元数据
 function generateFrontMatter(node, slug, isIndexDoc = false, position = 0) {
@@ -331,22 +284,15 @@ async function downloadAndConvertDoc(token, doc) {
   try {
     console.log(`   📥 下载: ${doc.title}`);
 
-    // 获取文档块数据
-    const blocks = await getDocBlocks(token, doc.objToken);
+    // 使用官方 API 直接获取 Markdown 内容
+    let markdown = await getMarkdownContent(token, doc.objToken);
 
-    if (!blocks || blocks.length === 0) {
+    if (!markdown || markdown.trim().length === 0) {
       console.log(`   ⚠️  文档为空，跳过: ${doc.title}`);
       return null;
     }
 
-    // 转换为 Markdown
-    console.log(`   🔄 转换: ${doc.title}`);
-    let markdown = convertToMarkdown(blocks, doc.objToken);
-
-    if (!markdown) {
-      console.log(`   ⚠️  转换失败，跳过: ${doc.title}`);
-      return null;
-    }
+    console.log(`   ✅ 获取成功: ${doc.title}`);
 
     // 清理可能导致 MDX 编译错误的 HTML
     markdown = cleanMarkdown(markdown);
@@ -499,10 +445,13 @@ async function main() {
     console.log('📄 处理"关于我"页面...\n');
 
     try {
-      const aboutBlocks = await getDocBlocks(token, CONFIG.aboutDocId);
-      let aboutMarkdown = convertToMarkdown(aboutBlocks, CONFIG.aboutDocId);
+      // 使用官方 API 直接获取 Markdown 内容
+      let aboutMarkdown = await getMarkdownContent(token, CONFIG.aboutDocId);
 
       if (aboutMarkdown) {
+        // 清理 Markdown
+        aboutMarkdown = cleanMarkdown(aboutMarkdown);
+
         // 解析并移除 slug
         const { slug: aboutSlug, markdown: cleanedAboutMarkdown } = parseAndRemoveSlug(aboutMarkdown);
 
