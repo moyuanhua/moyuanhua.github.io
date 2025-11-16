@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
+    "prebuild": "node scripts/generate-robots.js",
     "start": "docusaurus start",
     "build": "docusaurus build",
-    "build:cf": "bash scripts/run-sync.sh && docusaurus build",
+    "build:cf": "bash scripts/run-sync.sh && npm run build",
     "sync": "bash scripts/run-sync.sh",
     "verify": "node scripts/verify-build.js",
     "swizzle": "docusaurus swizzle",
