@@ -8,6 +8,10 @@ on:
   # 支持手动触发
   workflow_dispatch:
 
+# 设置权限允许推送到仓库
+permissions:
+  contents: write
+
 jobs:
   sync-docs:
     runs-on: ubuntu-latest
