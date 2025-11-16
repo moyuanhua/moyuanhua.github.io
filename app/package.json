@@ -6,16 +6,13 @@
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
     "build": "docusaurus build",
-    "build:cf": "node scripts/sync-feishu.js && docusaurus build",
-    "sync": "node scripts/sync-feishu.js",
-    "validate": "node scripts/validate-structure.js",
+    "build:cf": "node scripts/sync-feishu-v2.js && docusaurus build",
+    "sync": "node scripts/sync-feishu-v2.js",
     "verify": "node scripts/verify-build.js",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
     "serve": "docusaurus serve",
-    "write-translations": "docusaurus write-translations",
-    "write-heading-ids": "docusaurus write-heading-ids",
     "typecheck": "tsc"
   },
   "dependencies": {

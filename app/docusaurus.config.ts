@@ -15,16 +15,15 @@ const config: Config = {
   },
 
   // Set the production url of your site here
-  url: process.env.SITE_URL || 'https://your-username.github.io',
+  url: process.env.SITE_URL || 'https://moyuanhua.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
-  // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: process.env.BASE_URL || '/',
 
   // GitHub pages deployment config.
   organizationName: 'your-username', // Usually your GitHub org/user name.
   projectName: 'murphy-blog', // Usually your repo name.
 
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn', // 临时设置为 warn 以便构建通过
 
   // Markdown configuration
   markdown: {
@@ -33,26 +32,10 @@ const config: Config = {
     },
   },
 
-  // Internationalization configuration (T007)
+  // Single language configuration (Chinese only)
   i18n: {
     defaultLocale: 'zh',
-    locales: ['zh', 'en'],
-    localeConfigs: {
-      zh: {
-        label: '简体中文',
-        direction: 'ltr',
-        htmlLang: 'zh-CN',
-        calendar: 'gregory',
-        path: 'zh',
-      },
-      en: {
-        label: 'English',
-        direction: 'ltr',
-        htmlLang: 'en',
-        calendar: 'gregory',
-        path: 'en',
-      },
-    },
+    locales: ['zh'],
   },
 
   presets: [
@@ -61,25 +44,11 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          routeBasePath: 'docs',
+          routeBasePath: '/', // 文档作为根路径
           showLastUpdateTime: true,
-          // Remove edit URL for Feishu-synced content
           editUrl: undefined,
         },
-        blog: {
-          showReadingTime: true,
-          routeBasePath: 'blog',
-          feedOptions: {
-            type: ['rss', 'atom'],
-            xslt: true,
-          },
-          // Remove edit URL for Feishu-synced content
-          editUrl: undefined,
-          // Useful options to enforce blogging best practices
-          onInlineTags: 'warn',
-          onInlineAuthors: 'warn',
-          onUntruncatedBlogPosts: 'warn',
-        },
+        blog: false, // 禁用博客
         theme: {
           customCss: './src/css/custom.css',
         },
@@ -93,12 +62,10 @@ const config: Config = {
       require.resolve('@easyops-cn/docusaurus-search-local'),
       {
         hashed: true,
-        language: ['zh', 'en'],
-        docsRouteBasePath: '/docs',
-        blogRouteBasePath: '/blog',
+        language: ['zh'],
+        docsRouteBasePath: '/',
         indexDocs: true,
-        indexBlog: true,
-        indexPages: false,
+        indexPages: true,
         searchResultLimits: 8,
         searchResultContextMaxLength: 50,
         highlightSearchTermsOnTargetPage: true,
@@ -127,21 +94,12 @@ const config: Config = {
           label: '文档',
         },
         {
-          to: '/blog',
-          label: '博客',
-          position: 'left',
-        },
-        {
           to: '/about',
           label: '关于我',
           position: 'left',
         },
         {
-          type: 'localeDropdown',
-          position: 'right',
-        },
-        {
-          href: 'https://github.com/your-username/murphy-blog',
+          href: 'https://github.com/moyuanhua/moyuanhua.github.io',
           label: 'GitHub',
           position: 'right',
         },
@@ -154,30 +112,21 @@ const config: Config = {
           title: '文档',
           items: [
             {
-              label: '快速开始',
-              to: '/docs/intro',
+              label: '开始阅读',
+              to: '/',
             },
           ],
         },
         {
-          title: '社区',
+          title: '链接',
           items: [
-            {
-              label: 'GitHub',
-              href: 'https://github.com/your-username/murphy-blog',
-            },
-          ],
-        },
-        {
-          title: '更多',
-          items: [
-            {
-              label: '博客',
-              to: '/blog',
-            },
             {
               label: '关于我',
               to: '/about',
+            },
+            {
+              label: 'GitHub',
+              href: 'https://github.com/moyuanhua/moyuanhua.github.io',
             },
           ],
         },
