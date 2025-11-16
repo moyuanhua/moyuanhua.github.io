@@ -12,7 +12,12 @@
 const path = require('path');
 const fs = require('fs');
 const https = require('https');
-require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+const { execSync } = require('child_process');
+// 使用 override 选项强制覆盖系统环境变量
+require('dotenv').config({
+  path: path.resolve(__dirname, '../.env'),
+  override: true
+});
 
 console.log('🚀 飞书内容同步 V2 - 增量更新版\n');
 
@@ -50,13 +55,9 @@ function httpsRequest(options, data = null) {
       res.on('end', () => {
         try {
           const result = JSON.parse(body);
-          if (result.code === 0) {
-            resolve(result.data);
-          } else {
-            reject(new Error(`API Error ${result.code}: ${result.msg}`));
-          }
+          resolve(result);
         } catch (e) {
-          reject(new Error(`Parse error: ${e.message}`));
+          reject(new Error(`Parse error: ${e.message}\nBody: ${body}`));
         }
       });
     });
@@ -85,6 +86,11 @@ async function getTenantAccessToken() {
   };
 
   const result = await httpsRequest(options, data);
+
+  if (result.code !== 0) {
+    throw new Error(`获取令牌失败 ${result.code}: ${result.msg}`);
+  }
+
   console.log('   ✅ 令牌获取成功\n');
   return result.tenant_access_token;
 }
@@ -102,7 +108,13 @@ async function getWikiNodes(token, spaceId, parentNodeToken = null) {
     headers: { 'Authorization': `Bearer ${token}` }
   };
 
-  return await httpsRequest(options);
+  const result = await httpsRequest(options);
+
+  if (result.code !== 0) {
+    throw new Error(`获取节点列表失败 ${result.code}: ${result.msg}`);
+  }
+
+  return result.data;
 }
 
 // 获取文档元数据（包含更新时间）
@@ -115,23 +127,33 @@ async function getDocMeta(token, docId) {
   };
 
   try {
-    const data = await httpsRequest(options);
+    const result = await httpsRequest(options);
+
+    if (result.code !== 0) {
+      console.log(`   ⚠️  无法获取文档元数据: ${docId} (${result.code}: ${result.msg})`);
+      return null;
+    }
+
     return {
-      title: data.document.title,
-      updateTime: data.document.update_time,
+      title: result.data.document.title,
+      updateTime: result.data.document.update_time,
       docId: docId
     };
   } catch (error) {
-    console.log(`   ⚠️  无法获取文档元数据: ${docId}`);
+    console.log(`   ⚠️  无法获取文档元数据: ${docId} (${error.message})`);
     return null;
   }
 }
 
 // 检查文档是否需要更新（3天内更新过）
 function shouldUpdate(updateTime, days = 3) {
-  const docDate = new Date(parseInt(updateTime));
+  if (!updateTime) return true; // 如果没有更新时间，默认需要更新
+
+  // 飞书返回的是秒级时间戳
+  const docDate = new Date(parseInt(updateTime) * 1000);
   const now = new Date();
   const diffDays = (now - docDate) / (1000 * 60 * 60 * 24);
+
   return diffDays <= days;
 }
 
@@ -148,7 +170,9 @@ async function traverseDocTree(token, spaceId, nodeToken, depth = 0) {
 
     if (meta) {
       const needsUpdate = shouldUpdate(meta.updateTime, CONFIG.incrementalDays);
-      const updateDate = new Date(parseInt(meta.updateTime)).toLocaleString('zh-CN');
+      const updateDate = meta.updateTime
+        ? new Date(parseInt(meta.updateTime) * 1000).toLocaleString('zh-CN')
+        : '未知';
 
       console.log(`${indent}  📄 ${meta.title}`);
       console.log(`${indent}     更新时间: ${updateDate}`);
@@ -194,23 +218,71 @@ async function main() {
     if (docsToUpdate.length > 0) {
       console.log('📥 开始同步文档...\n');
 
-      // 使用 feishu-pages 同步这些文档
-      const { execSync } = require('child_process');
-
       // 同步整个文档树（feishu-pages 会处理具体的同步逻辑）
-      const command = `npx feishu-pages@latest --space-id ${CONFIG.wikiId} --node-token ${CONFIG.docsNodeId} --out-dir ${path.resolve(__dirname, '../docs')}`;
+      // 注意：feishu-pages 会忽略 --out-dir 参数，始终输出到 dist/docs
+      const command = `npx feishu-pages@latest --space-id ${CONFIG.wikiId} --node-token ${CONFIG.docsNodeId}`;
 
-      execSync(command, {
-        stdio: 'inherit',
-        env: {
+      console.log(`   执行命令: ${command}`);
+      console.log(`   WIKI_ID: ${CONFIG.wikiId}`);
+      console.log(`   NODE_ID: ${CONFIG.docsNodeId}\n`);
+
+      try {
+        // 创建一个干净的环境变量,只包含必要的值
+        const cleanEnv = {
           ...process.env,
           FEISHU_APP_ID: CONFIG.appId,
           FEISHU_APP_SECRET: CONFIG.appSecret,
           FEISHU_SPACE_ID: CONFIG.wikiId,
-        }
-      });
+          FEISHU_WIKI_ID: CONFIG.wikiId,
+        };
+        // 删除可能冲突的旧环境变量
+        delete cleanEnv.FEISHU_ZH_NODE_ID;
+        delete cleanEnv.FEISHU_EN_NODE_ID;
+        delete cleanEnv.FEISHU_ABOUT_DOC_ID;
+        delete cleanEnv.FEISHU_DOCS_NODE_ID;
 
-      console.log('✅ 文档同步完成\n');
+        execSync(command, {
+          stdio: 'inherit',
+          cwd: path.resolve(__dirname, '..'),
+          env: cleanEnv
+        });
+
+        // 将文件从 dist/docs 移动到 docs
+        const distDocsDir = path.resolve(__dirname, '../dist/docs');
+        const targetDocsDir = path.resolve(__dirname, '../docs');
+
+        console.log('   📦 移动文档到目标目录...');
+
+        // 确保目标目录存在
+        if (!fs.existsSync(targetDocsDir)) {
+          fs.mkdirSync(targetDocsDir, { recursive: true });
+        }
+
+        // 递归复制函数
+        function copyRecursive(src, dest) {
+          if (fs.statSync(src).isDirectory()) {
+            if (!fs.existsSync(dest)) {
+              fs.mkdirSync(dest, { recursive: true });
+            }
+            const files = fs.readdirSync(src);
+            for (const file of files) {
+              copyRecursive(path.join(src, file), path.join(dest, file));
+            }
+          } else {
+            fs.copyFileSync(src, dest);
+          }
+        }
+
+        // 复制文件
+        if (fs.existsSync(distDocsDir)) {
+          copyRecursive(distDocsDir, targetDocsDir);
+        }
+
+        console.log('✅ 文档同步完成\n');
+      } catch (error) {
+        console.error('❌ 文档同步失败:', error.message);
+        throw error;
+      }
     } else {
       console.log('✨ 没有需要更新的文档\n');
     }
@@ -221,23 +293,56 @@ async function main() {
     const aboutMeta = await getDocMeta(token, CONFIG.aboutDocId);
     if (aboutMeta) {
       const needsUpdate = shouldUpdate(aboutMeta.updateTime, CONFIG.incrementalDays);
+      const updateDate = aboutMeta.updateTime
+        ? new Date(parseInt(aboutMeta.updateTime) * 1000).toLocaleString('zh-CN')
+        : '未知';
+
       console.log(`   标题: ${aboutMeta.title}`);
-      console.log(`   更新时间: ${new Date(parseInt(aboutMeta.updateTime)).toLocaleString('zh-CN')}`);
+      console.log(`   更新时间: ${updateDate}`);
       console.log(`   ${needsUpdate ? '✅ 需要同步' : '⏭️  跳过'}\n`);
 
       if (needsUpdate) {
-        const aboutCommand = `npx feishu-pages@latest --doc-id ${CONFIG.aboutDocId} --out ${path.resolve(__dirname, '../src/pages/about.md')}`;
+        // feishu-pages 会忽略 --out 参数，始终输出到 dist/docs
+        const aboutCommand = `npx feishu-pages@latest --space-id ${CONFIG.wikiId}`;
 
-        execSync(aboutCommand, {
-          stdio: 'inherit',
-          env: {
+        console.log(`   执行命令: ${aboutCommand}`);
+        console.log(`   DOC_ID: ${CONFIG.aboutDocId}\n`);
+
+        try {
+          // 创建一个干净的环境变量,只包含必要的值
+          const cleanEnv = {
             ...process.env,
             FEISHU_APP_ID: CONFIG.appId,
             FEISHU_APP_SECRET: CONFIG.appSecret,
-          }
-        });
+            FEISHU_SPACE_ID: CONFIG.wikiId,
+            FEISHU_WIKI_ID: CONFIG.wikiId,
+          };
+          // 删除可能冲突的旧环境变量
+          delete cleanEnv.FEISHU_ZH_NODE_ID;
+          delete cleanEnv.FEISHU_EN_NODE_ID;
+          delete cleanEnv.FEISHU_ABOUT_DOC_ID;
+          delete cleanEnv.FEISHU_DOCS_NODE_ID;
 
-        console.log('✅ "关于我"页面同步完成\n');
+          execSync(aboutCommand, {
+            stdio: 'inherit',
+            cwd: path.resolve(__dirname, '..'),
+            env: cleanEnv
+          });
+
+          // 从 dist/docs 复制"关于我"文档到 src/pages/about.md
+          const aboutSourceFile = path.resolve(__dirname, `../dist/docs/${CONFIG.aboutDocId}.md`);
+          const aboutTargetFile = path.resolve(__dirname, '../src/pages/about.md');
+
+          if (fs.existsSync(aboutSourceFile)) {
+            console.log('   📦 移动"关于我"文档到目标位置...');
+            fs.copyFileSync(aboutSourceFile, aboutTargetFile);
+          }
+
+          console.log('✅ "关于我"页面同步完成\n');
+        } catch (error) {
+          console.error('❌ "关于我"页面同步失败:', error.message);
+          throw error;
+        }
       }
     }
 
