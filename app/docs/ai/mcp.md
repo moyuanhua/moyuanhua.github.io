@@ -172,7 +172,7 @@ Session ID: "abc-123-def"
 │  │  McpServerAdapter (mcp/adapters/mcpServerAdapter.ts)   │  │
 │  │  - 动态注册 Tools                                       │  │
 │  │  - 处理工具调用                                         │  │
-│  └────────────┬───────────────────────────────────────────┘  │
+│  └─────���──────┬───────────────────────────────────────────┘  │
 │               │                                               │
 │               ▼                                               │
 │  ┌────────────────────────────────────────────────────────┐  │
@@ -249,7 +249,7 @@ app/
      │                                   标记为已初始化         │
      │                                                         │
      │ HTTP 202 Accepted                                       │
-     │ ◄────────────────────────────────────────────────────────┤
+     │ ◄──────────────────────────────────────────────────────��─┤
      │                                                         │
      │                                                         │
      │ 3️⃣ POST /mcp/xxx                                       │
@@ -540,7 +540,7 @@ router.post('/:combination_id', async (req, res) => {
 
 ```text
 请求 1: Initialize
-  ├─ 创建 Server 实例 A
+  ├─ ���建 Server 实例 A
   ├─ 调用 server.connect()
   ├─ 注册到 SessionManager: cache["abc-123"] = 实例 A ✅
   └─ 响应（实例 A 保持在内存中）
@@ -682,7 +682,7 @@ if (existingSessionId) {
   }
   // 如果已连接，跳过 connect()
 } else {
-  // 新 session - 总是 connect
+  // 新 session - 总��� connect
   await serverAdapter.getServer().connect(transport);
 }
 ```
@@ -922,7 +922,7 @@ curl http://localhost:3000/debug/sessions | jq '.'
 
 ❌ <b>DON'T</b>
 
-- 不要每次请��都创建新实例
+- 不要每次请求都创建新实例
 - 不要忽略 `notifications/initialized` 通知
 - 不要让 session 无限堆积
 - 不要在客户端忘记发送 sessionId
