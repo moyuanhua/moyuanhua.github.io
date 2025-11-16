@@ -53,6 +53,13 @@ const config: Config = {
         theme: {
           customCss: './src/css/custom.css',
         },
+        // SEO: 启用 sitemap 生成
+        sitemap: {
+          changefreq: 'weekly',
+          priority: 0.5,
+          ignorePatterns: ['/tags/**'],
+          filename: 'sitemap.xml',
+        },
       } satisfies Preset.Options,
     ],
   ],
@@ -75,8 +82,16 @@ const config: Config = {
   ],
 
   themeConfig: {
-    // Replace with your project's social card
+    // SEO: 社交媒体卡片图片
     image: 'img/docusaurus-social-card.jpg',
+    // SEO: 网站元数据
+    metadata: [
+      {name: 'keywords', content: 'Shopify, 跨境电商, AI开发, MCP, 技术博客, Docusaurus, 飞书'},
+      {name: 'author', content: 'Murphy'},
+      {name: 'description', content: '分享Shopify开发、跨境电商技术和AI应用的技术博客'},
+      {property: 'og:type', content: 'website'},
+      {property: 'og:site_name', content: 'Murphy Blog'},
+    ],
     colorMode: {
       respectPrefersColorScheme: true,
     },

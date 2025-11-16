@@ -1,6 +1,15 @@
 # https://www.robotstxt.org/robotstxt.html
+# 允许所有搜索引擎爬取所有内容
 User-agent: *
 Allow: /
 
-# Sitemap
-Sitemap: https://your-project.pages.dev/sitemap.xml
+# Sitemap 位置
+Sitemap: https://blog.shopifytools.work/sitemap.xml
+
+# Google 搜索引擎
+User-agent: Googlebot
+Allow: /
+
+# 百度搜索引擎
+User-agent: Baiduspider
+Allow: /
