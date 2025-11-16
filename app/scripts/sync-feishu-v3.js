@@ -392,17 +392,51 @@ function saveDoc(outputDir, docData, slugMap) {
   const dirName = docData.slug || docData.nodeToken;
 
   let outputPath;
+  let targetDir; // 目标目录，用于清理旧文件
+
   if (docData.hasChild) {
     // 如果文档有子节点，保存为 index.md 在目录下
     outputPath = adjustedParentPath
       ? path.join(outputDir, adjustedParentPath, dirName, 'index.md')
       : path.join(outputDir, dirName, 'index.md');
+    targetDir = path.dirname(outputPath); // 文档目录本身
   } else {
     // 独立文档
     const fileName = `${dirName}.md`;
     outputPath = adjustedParentPath
       ? path.join(outputDir, adjustedParentPath, fileName)
       : path.join(outputDir, fileName);
+    targetDir = path.dirname(outputPath); // 父目录
+  }
+
+  // 清理同目录下可能存在的旧文件（slug 相同但路径不同）
+  if (docData.slug && fs.existsSync(targetDir)) {
+    try {
+      const files = fs.readdirSync(targetDir);
+      for (const file of files) {
+        const filePath = path.join(targetDir, file);
+        const stat = fs.statSync(filePath);
+
+        // 跳过目录和当前要写入的文件
+        if (stat.isDirectory() || filePath === outputPath) {
+          continue;
+        }
+
+        // 读取文件的 frontmatter 检查 slug
+        if (file.endsWith('.md')) {
+          const content = fs.readFileSync(filePath, 'utf-8');
+          const slugMatch = content.match(/^---\n[\s\S]*?slug:\s*["']?([^\n"']+)["']?\n[\s\S]*?---/m);
+
+          if (slugMatch && slugMatch[1] === docData.slug) {
+            console.log(`   🗑️  删除旧文件: ${filePath}`);
+            fs.unlinkSync(filePath);
+          }
+        }
+      }
+    } catch (error) {
+      // 忽略清理错误，继续保存
+      console.warn(`   ⚠️  清理旧文件时出错: ${error.message}`);
+    }
   }
 
   console.log(`   💾 保存: ${outputPath}`);
