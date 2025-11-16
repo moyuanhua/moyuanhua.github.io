@@ -154,28 +154,43 @@ function cleanMarkdown(markdown) {
 
   let cleaned = markdown;
 
-  // 1. 清理表格中的列表标签（特别处理）
+  // 1. 清理飞书官方 API 的过度转义
+  // 移除 URL 中的转义反斜杠: https://example\.com -> https://example.com
+  cleaned = cleaned.replace(/([a-zA-Z0-9])\\\./g, '$1.');
+
+  // 移除列表符号的转义: \- -> -
+  cleaned = cleaned.replace(/^\\-\s/gm, '- ');
+  cleaned = cleaned.replace(/^\\\*\s/gm, '* ');
+
+  // 移除其他常见 Markdown 符号的转义
+  cleaned = cleaned.replace(/\\\(/g, '(');
+  cleaned = cleaned.replace(/\\\)/g, ')');
+  cleaned = cleaned.replace(/\\\[/g, '[');
+  cleaned = cleaned.replace(/\\\]/g, ']');
+  cleaned = cleaned.replace(/\\\_/g, '_');
+
+  // 2. 清理表格中的列表标签（特别处理）
   // 移除 <td> 内的 <ul><li> 结构（常见于飞书表格转换错误）
   cleaned = cleaned.replace(/<td>([^<]*)<ul>\s*<li>\s*<\/td>/gi, '<td>$1-</td>');
   cleaned = cleaned.replace(/<td>([^<]*)<ul>\s*<li>[^<]*<\/li>\s*<\/ul>([^<]*)<\/td>/gi, '<td>$1$2</td>');
 
-  // 2. 移除不完整的 HTML 标签（常见于飞书转换）
+  // 3. 移除不完整的 HTML 标签（常见于飞书转换）
   cleaned = cleaned.replace(/<(ul|ol)([^>]*)>\s*<li>\s*$/gim, '');
   cleaned = cleaned.replace(/<\/(ul|ol)>\s*$/gim, '');
 
-  // 3. 移除孤立的闭合标签
+  // 4. 移除孤立的闭合标签
   cleaned = cleaned.replace(/<\/(ul|ol|li|div|span)>/gi, '');
 
-  // 4. 修复常见的 HTML 实体
+  // 5. 修复常见的 HTML 实体
   cleaned = cleaned.replace(/&nbsp;/g, ' ');
   cleaned = cleaned.replace(/&lt;/g, '<');
   cleaned = cleaned.replace(/&gt;/g, '>');
   cleaned = cleaned.replace(/&amp;/g, '&');
 
-  // 5. 移除空的 HTML 注释
+  // 6. 移除空的 HTML 注释
   cleaned = cleaned.replace(/<!--\s*-->/g, '');
 
-  // 6. 确保代码块正确闭合
+  // 7. 确保代码块正确闭合
   const codeBlockCount = (cleaned.match(/```/g) || []).length;
   if (codeBlockCount % 2 !== 0) {
     cleaned += '\n```\n';

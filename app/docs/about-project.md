@@ -14,9 +14,9 @@ sidebar_position: 1
 
 
 
-\- **GitHub Pages**: https://moyuanhua\.github\.io
+- **GitHub Pages**: https://moyuanhua.github.io
 
-\- **Cloudflare Pages**: https://blog\.shopifytools\.work
+- **Cloudflare Pages**: https://blog.shopifytools.work
 
 
 
@@ -28,23 +28,23 @@ sidebar_position: 1
 
 
 
-\- 🚀 **真正的增量同步**: 智能检测文档更新时间，只同步变更内容，大幅提升同步速度
+- 🚀 **真正的增量同步**: 智能检测文档更新时间，只同步变更内容，大幅提升同步速度
 
-\- 🤖 **GitHub Actions 自动化**: 每天自动从飞书同步文档并部署到双平台
+- 🤖 **GitHub Actions 自动化**: 每天自动从飞书同步文档并部署到双平台
 
-\- 📝 **飞书官方 API 集成**: 使用飞书官方 Markdown API，完整支持所有格式（有序列表、引用等）
+- 📝 **飞书官方 API 集成**: 使用飞书官方 Markdown API，完整支持所有格式（有序列表、引用等）
 
-\- 🎯 **智能 Slug 管理**: 自动解析并应用文档 slug，生成友好的 URL 结构
+- 🎯 **智能 Slug 管理**: 自动解析并应用文档 slug，生成友好的 URL 结构
 
-\- 📁 **嵌套文档支持**: 完美处理文档集合的父子关系，保持层级结构
+- 📁 **嵌套文档支持**: 完美处理文档集合的父子关系，保持层级结构
 
-\- 🔢 **顺序保持**: 严格按照飞书中的文档顺序显示，sidebar\_position 自动生成
+- 🔢 **顺序保持**: 严格按照飞书中的文档顺序显示，sidebar_position 自动生成
 
-\- 🎨 **极简设计**: 简洁的黑白配色，专注内容本身
+- 🎨 **极简设计**: 简洁的黑白配色，专注内容本身
 
-\- 📱 **响应式布局**: 完美适配移动端和桌面端
+- 📱 **响应式布局**: 完美适配移动端和桌面端
 
-\- 🔍 **中文搜索**: 支持中文分词的全文搜索功能
+- 🔍 **中文搜索**: 支持中文分词的全文搜索功能
 
 
 
@@ -56,19 +56,19 @@ sidebar_position: 1
 
 
 
-\- **静态站点生成器**: Docusaurus 3\.9\.2
+- **静态站点生成器**: Docusaurus 3.9.2
 
-\- **内容源**: 飞书知识库
+- **内容源**: 飞书知识库
 
-\- **Markdown 转换**: 飞书官方 Markdown API \(\`/open\-apis/docs/v1/content\`\)
+- **Markdown 转换**: 飞书官方 Markdown API (\`/open\-apis/docs/v1/content\`)
 
-\- **搜索引擎**: @easyops\-cn/docusaurus\-search\-local
+- **搜索引擎**: @easyops\-cn/docusaurus\-search\-local
 
-\- **语言**: TypeScript \+ React 19 \+ Node\.js 20\+
+- **语言**: TypeScript \+ React 19 \+ Node.js 20\+
 
-\- **CI/CD**: GitHub Actions
+- **CI/CD**: GitHub Actions
 
-\- **部署平台**: GitHub Pages \+ Cloudflare Pages
+- **部署平台**: GitHub Pages \+ Cloudflare Pages
 
 
 
@@ -108,7 +108,7 @@ moyuanhua.github.io (Git 仓库 + GitHub Pages)
 
 
 
-#### **1\. 两阶段增量同步系统**
+#### **1. 两阶段增量同步系统**
 
 
 
@@ -171,7 +171,7 @@ const markdown = await getMarkdownContent(token, docId);  // 一步到位，完�
 
 - 🔄 官方维护，自动支持新功能
 
-#### **2\. 智能文档结构映射**
+#### **2. 智能文档结构映射**
 
 
 
@@ -202,7 +202,7 @@ URL 结果:
 
 
 
-#### **3\. 文档顺序智能保持**
+#### **3. 文档顺序智能保持**
 
 
 
@@ -261,7 +261,7 @@ murphy-blog/
 
 
 
-### **1\. 环境准备**
+### **1. 环境准备**
 
 
 
@@ -276,21 +276,21 @@ cd murphy-blog/app
 
 
 
-### **2\. 配置飞书应用**
+### **2. 配置飞书应用**
 
 
 
 在飞书开放平台创建应用，获取以下权限：
 
-- `docs:document\.content:read` \- 查看云文档内容（Markdown 导出）
+- `docs:document.content:read` \- 查看云文档内容（Markdown 导出）
 
 - `wiki:wiki:readonly` \- 读取知识库结构
 
-**重要**：\`docs:document\.content:read\` 是飞书官方 Markdown API 所需权限，添加后需要发布新版本才能生效。
+**重要**：\`docs:document.content:read\` 是飞书官方 Markdown API 所需权限，添加后需要发布新版本才能生效。
 
 
 
-### **3\. 配置环境变量**
+### **3. 配置环境变量**
 
 
 
@@ -321,7 +321,7 @@ SKIP_FEISHU_SYNC=false
 
 
 
-### **4\. 安装依赖**
+### **4. 安装依赖**
 
 
 
@@ -331,7 +331,7 @@ npm install
 
 
 
-### **5\. 同步飞书内容**
+### **5. 同步飞书内容**
 
 
 
@@ -379,7 +379,7 @@ npm run sync
 
 
 
-### **6\. 启动开发服务器**
+### **6. 启动开发服务器**
 
 
 
@@ -405,11 +405,11 @@ npm start
 
 
 
-1\. **在飞书中编辑文档**：在飞书知识库中创建/更新文档
+1. **在飞书中编辑文档**：在飞书知识库中创建/更新文档
 
-2\. **自动同步**：GitHub Actions 每天北京时间 9:00 自动同步
+2. **自动同步**：GitHub Actions 每天北京时间 9:00 自动同步
 
-3\. **自动部署**：Cloudflare Pages 检测到 Git 变更后自动部署
+3. **自动部署**：Cloudflare Pages 检测到 Git 变更后自动部署
 
 
 
@@ -447,7 +447,7 @@ FEISHU_ABOUT_DOC_ID=DKvmwNWVOiYA6KklWcsc1gHInKg
 
 
 
-1\. **在飞书中管理内容**
+1. **在飞书中管理内容**
 
 - 文档组织：在飞书知识库中创建文档和文档集合
 
@@ -455,7 +455,7 @@ FEISHU_ABOUT_DOC_ID=DKvmwNWVOiYA6KklWcsc1gHInKg
 
     - 保存发布：飞书中的修改会自动记录更新时间
 
-2\. **同步到本地**
+2. **同步到本地**
 
 
 
@@ -497,7 +497,7 @@ npm run build
 </td>
 <td>
 
-启动开发服务器 \(http://localhost:3000\)
+启动开发服务器 (http://localhost:3000)
 
 </td>
 </tr>
@@ -569,7 +569,7 @@ Cloudflare Pages 构建（同步 \+ 构建）
 
 
 
-### **1\. 性能优势**
+### **1. 性能优势**
 
 
 
@@ -614,8 +614,7 @@ Cloudflare Pages 构建（同步 \+ 构建）
 </td>
 <td>
 
-\-
-
+- 
 </td>
 </tr>
 </tbody></table>
@@ -626,7 +625,7 @@ Cloudflare Pages 构建（同步 \+ 构建）
 
 
 
-### **2\. URL 友好度**
+### **2. URL 友好度**
 
 
 
@@ -646,7 +645,7 @@ Cloudflare Pages 构建（同步 \+ 构建）
 
 
 
-### **3\. 维护性**
+### **3. 维护性**
 
 
 
@@ -658,7 +657,7 @@ Cloudflare Pages 构建（同步 \+ 构建）
 
 - ✅ 代码简洁，注释完整
 
-### **4\. 功能完整性**
+### **4. 功能完整性**
 
 
 
@@ -680,13 +679,13 @@ Cloudflare Pages 构建（同步 \+ 构建）
 
 
 
-\- **Logo**: 黑色圆形背景 \+ 白色 M 字母
+- **Logo**: 黑色圆形背景 \+ 白色 M 字母
 
-\- **Favicon**: 白色背景 \+ 黑色 M 字母
+- **Favicon**: 白色背景 \+ 黑色 M 字母
 
-\- **导航**: 简洁导航栏，Logo 点击进入\&\#34;关于我\&\#34;
+- **导航**: 简洁导航栏，Logo 点击进入\&\#34;关于我\&\#34;
 
-\- **Footer**: 极简设计，只显示 Copyright
+- **Footer**: 极简设计，只显示 Copyright
 
 
 
@@ -722,7 +721,7 @@ Cloudflare Pages 构建（同步 \+ 构建）
 
 
 
-访问地址：`https://moyuanhua\.github\.io`
+访问地址：`https://moyuanhua.github.io`
 
 
 
@@ -738,7 +737,7 @@ Cloudflare Pages 构建（同步 \+ 构建）
 
 5. Pages → 创建项目 → 连接到 Git
 
-6. 选择 `moyuanhua/moyuanhua\.github\.io` 仓库
+6. 选择 `moyuanhua/moyuanhua.github.io` 仓库
 
 **构建配置**：
 
@@ -826,7 +825,7 @@ BASE_URL=/
 
 
 
-访问地址：`https://blog\.shopifytools\.work`（或你的自定义域名）
+访问地址：`https://blog.shopifytools.work`（或你的自定义域名）
 
 
 
@@ -1004,7 +1003,7 @@ FEISHU_INCREMENTAL_DAYS=0
 
 
 
-编辑 `\.github/workflows/sync\-feishu\-docs\.yml`：
+编辑 `\.github/workflows/sync\-feishu\-docs.yml`：
 
 
 
@@ -1021,7 +1020,7 @@ schedule:
 
 
 
-编辑 `src/css/custom\.css`：
+编辑 `src/css/custom.css`：
 
 
 
@@ -1041,15 +1040,15 @@ schedule:
 
 
 
-\- **构建时间**: \~2\-3 秒（增量）
+- **构建时间**: \~2\-3 秒（增量）
 
-\- **同步时间**: \~10\-20 秒（3天内更新）
+- **同步时间**: \~10\-20 秒（3天内更新）
 
-\- **包大小**: \~500KB（gzipped）
+- **包大小**: \~500KB（gzipped）
 
-\- **性能评分**: 95\+ \(Lighthouse\)
+- **性能评分**: 95\+ (Lighthouse)
 
-\- **SEO 友好**: 100% 静态生成
+- **SEO 友好**: 100% 静态生成
 
 
 
@@ -1106,7 +1105,7 @@ npm run build
 
 
 
-### **V4\.0 \(2025\-11\-16\) 🎉**
+### **V4.0 (2025\-11\-16) 🎉**
 
 
 
@@ -1130,19 +1129,19 @@ npm run build
 
 - ⚡ API 调用次数大幅减少（从分页获取 Block → 一次获取完整内容）
 
-- 🔧 简化 `downloadAndConvertDoc\(\)` 函数逻辑
+- 🔧 简化 `downloadAndConvertDoc()` 函数逻辑
 
 **修复问题：**
 
 - ✅ 修复有序列表在转换后丢失的问题
 
-- ✅ 修复引用容器（quote\_container）内容不显示的问题
+- ✅ 修复引用容器（quote_container）内容不显示的问题
 
 - ✅ 修复其他第三方库不支持的块类型
 
 **破坏性变更：**
 
-- ⚠️ 需要在飞书应用中添加新权限：`docs:document\.content:read`
+- ⚠️ 需要在飞书应用中添加新权限：`docs:document.content:read`
 
 - ⚠️ 旧的 `docx:document:readonly` 权限已不再使用
 
@@ -1150,7 +1149,7 @@ npm run build
 
 7. 访问飞书开放平台应用管理
 
-8. 添加权限：`docs:document\.content:read`（查看云文档内容）
+8. 添加权限：`docs:document.content:read`（查看云文档内容）
 
 9. 发布新版本（权限才会生效）
 
@@ -1158,7 +1157,7 @@ npm run build
 
 11. 运行 `npm run sync` 测试同步
 
-### **V3\.0 \(2025\-11\-14\)**
+### **V3.0 (2025\-11\-14)**
 
 
 
@@ -1210,7 +1209,7 @@ MIT
 
 - GitHub: [@moyuanhua](https://github.com/moyuanhua)
 
-- Website: https://blog\.shopifytools\.work
+- Website: https://blog.shopifytools.work
 
 ---
 

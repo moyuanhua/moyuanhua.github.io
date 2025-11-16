@@ -6,7 +6,7 @@ sidebar_position: 1
 
 # MCP 实现指南 \- 从入门到精通
 
-> 本文档详细介绍 Model Context Protocol \(MCP\) 在本项目中的实现原理和方法
+> 本文档详细介绍 Model Context Protocol (MCP) 在本项目中的实现原理和方法
 > 
 > 
 
@@ -16,21 +16,21 @@ sidebar_position: 1
 
 
 
-1. \[什么是 MCP\]\(\#什么是\-mcp\)
+1. [什么是 MCP](\#什么是\-mcp)
 
-2. \[MCP 核心概念\]\(\#mcp\-核心概念\)
+2. [MCP 核心概念](\#mcp\-核心概念)
 
-3. \[项目架构概览\]\(\#项目架构概览\)
+3. [项目架构概览](\#项目架构概览)
 
-4. \[完整的请求流程\]\(\#完整的请求流程\)
+4. [完整的请求流程](\#完整的请求流程)
 
-5. \[核心组件详解\]\(\#核心组件详解\)
+5. [核心组件详解](\#核心组件详解)
 
-6. \[Session 管理机制\]\(\#session\-管理机制\)
+6. [Session 管理机制](\#session\-管理机制)
 
-7. \[常见问题与解决方案\]\(\#常见问题与解决方案\)
+7. [常见问题与解决方案](\#常见问题与解决方案)
 
-8. \[实战示例\]\(\#实战示例\)
+8. [实战示例](\#实战示例)
 
 ---
 
@@ -40,7 +40,7 @@ sidebar_position: 1
 
 
 
-**MCP \(Model Context Protocol\)** 是 Anthropic 推出的一个开放协议，用于 AI 模型与外部工具、数据源之间的标准化通信。
+**MCP (Model Context Protocol)** 是 Anthropic 推出的一个开放协议，用于 AI 模型与外部工具、数据源之间的标准化通信。
 
 
 
@@ -59,11 +59,11 @@ sidebar_position: 1
 
 
 
-\- **统一接口**：AI 可以通过统一的协议调用任何符合 MCP 标准的工具
+- **统一接口**：AI 可以通过统一的协议调用任何符合 MCP 标准的工具
 
-\- **动态发现**：AI 可以动态获取可用的工具列表和参数
+- **动态发现**：AI 可以动态获取可用的工具列表和参数
 
-\- **标准化**：类似 HTTP 协议，为 AI 工具调用提供标准
+- **标准化**：类似 HTTP 协议，为 AI 工具调用提供标准
 
 
 
@@ -119,7 +119,7 @@ HTTP RESTful
 </td>
 <td>
 
-JSON\-RPC 2\.0
+JSON\-RPC 2.0
 
 </td>
 </tr>
@@ -186,7 +186,7 @@ AI 工具调用专用
 
 
 
-### **1\. Tools \(工具\)**
+### **1. Tools (工具)**
 
 
 
@@ -224,7 +224,7 @@ interface Tool {
 
 
 
-### **2\. Resources \(资源\)**
+### **2. Resources (资源)**
 
 
 
@@ -243,7 +243,7 @@ interface Resource {
 
 
 
-### **3\. Prompts \(提示词\)**
+### **3. Prompts (提示词)**
 
 
 
@@ -261,7 +261,7 @@ interface Prompt {
 
 
 
-### **4\. Session \(会话\)**
+### **4. Session (会话)**
 
 
 
@@ -427,7 +427,7 @@ app/
      │                                   返回工具列表 ✓         │
      │                                                         │
      │ Response:                                               │
-     │ ◄──────────��──────────���──────────────────────────────────┤
+     │ ◄────────────────────────────────────────────────────────┤
      │ { result: { tools: [...] } }                            │
      │                                                         │
      │                                                         │
@@ -451,7 +451,7 @@ app/
 
 
 
-1\. **第一次请求（Initialize）**
+1. **第一次请求（Initialize）**
 
 - 客户端不发送 `Mcp\-Session\-Id` header
 
@@ -461,17 +461,17 @@ app/
 
 - 服务器在响应头中返回 `Mcp\-Session\-Id`
 
-2\. **第二次请求（Initialized Notification）**
+2. **第二次请求（Initialized Notification）**
 
 - 客户端发送 `Mcp\-Session\-Id` header
 
 - 服务器从 SessionManager 获取已有实例
 
-\- **不再创建新实例**（这是关键！）
+- **不再创建新实例**（这是关键！）
 
 - SDK 标记该 session 为已初始化
 
-3\. **后续请求（Tools/List, Tools/Call 等）**
+3. **后续请求（Tools/List, Tools/Call 等）**
 
 - 客户端继续使用同一个 sessionId
 
@@ -487,7 +487,7 @@ app/
 
 
 
-### **1\. StreamableHTTPServerTransport**
+### **1. StreamableHTTPServerTransport**
 
 
 
@@ -534,15 +534,15 @@ const transport = new StreamableHTTPServerTransport({
 
 
 
-\- **sessionIdGenerator**: 生成唯一的 session ID
+- **sessionIdGenerator**: 生成唯一的 session ID
 
-\- **onsessioninitialized**: 在 \`initialize\` 请求完成后调用
+- **onsessioninitialized**: 在 \`initialize\` 请求完成后调用
 
-\- **enableJsonResponse**: \`true\` = JSON 格式响应，\`false\` = SSE 流式响应
+- **enableJsonResponse**: \`true\` = JSON 格式响应，\`false\` = SSE 流式响应
 
 
 
-### **2\. McpServerAdapter**
+### **2. McpServerAdapter**
 
 
 
@@ -599,15 +599,15 @@ export class McpServerAdapter {
 
 
 
-\- **setRequestHandler**: 注册不同类型请求的处理器
+- **setRequestHandler**: 注册不同类型请求的处理器
 
-\- **ListToolsRequestSchema**: 处理 \`tools/list\` 请求
+- **ListToolsRequestSchema**: 处理 \`tools/list\` 请求
 
-\- **CallToolRequestSchema**: 处理 \`tools/call\` 请求
+- **CallToolRequestSchema**: 处理 \`tools/call\` 请求
 
 
 
-### **3\. Session Manager**
+### **3. Session Manager**
 
 
 
@@ -682,7 +682,7 @@ Session 销毁 (remove)
 
 
 
-### **4\. 路由处理逻辑**
+### **4. 路由处理逻辑**
 
 
 
@@ -922,7 +922,7 @@ Error: Transport already started
 
 **原因**：
 
-- 对同一个 transport 实例多次调用 `server\.connect\(\)`
+- 对同一个 transport 实例多次调用 `server.connect()`
 
 **解决方案**：
 
@@ -1183,19 +1183,19 @@ curl http://localhost:3000/debug/sessions | jq '.'
 
 
 
-1\. **有状态协议**
+1. **有状态协议**
 
 - 需要完整的初始化握手
 
 - Session 必须在请求间保持
 
-2\. **Session Manager 是核心**
+2. **Session Manager 是核心**
 
 - 解决 HTTP 无状态与 MCP 有状态的矛盾
 
 - 缓存 Server 实例，避免重复创建
 
-3\. **正确的生命周期管理**
+3. **正确的生命周期管理**
 
 - 注册（onsessioninitialized）
 
@@ -1203,9 +1203,9 @@ curl http://localhost:3000/debug/sessions | jq '.'
 
 - 清理（TTL \+ onsessionclosed）
 
-4\. **避免常见陷阱**
+4. **避免常见陷阱**
 
-- 不要多次调用 `server\.connect\(\)`
+- 不要多次调用 `server.connect()`
 
 - 不要忘记清理过期 session
 
@@ -1251,6 +1251,6 @@ curl http://localhost:3000/debug/sessions | jq '.'
 
 **编写时间**: 2025\-11\-13
 
-**版本**: v1\.0
+**版本**: v1.0
 
-**作者**: Claude \(基于本项目实现经验\)
+**作者**: Claude (基于本项目实现经验)
