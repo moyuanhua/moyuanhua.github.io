@@ -40,17 +40,15 @@
     ↓
 GitHub Actions (每天 9:00 自动运行)
     ├─ 同步飞书文档
-    └─ 提交到 Git
+    ├─ 提交到 Git
+    ├─ 构建站点
+    └─ 部署到 GitHub Pages
         ↓
-moyuanhua.github.io (Git 仓库)
+moyuanhua.github.io (Git 仓库 + GitHub Pages)
     ↓
-    ├─→ GitHub Pages        (自动部署)
-    │       ↓
-    │   moyuanhua.github.io
+    ├─→ moyuanhua.github.io (GitHub Pages)
     │
-    └─→ Cloudflare Pages    (自动部署)
-            ↓
-        blog.shopifytools.work
+    └─→ blog.shopifytools.work (Cloudflare Pages - 监听 Git 推送)
 ```
 
 **优势**：

@@ -8,13 +8,18 @@ on:
   # 支持手动触发
   workflow_dispatch:
 
-# 设置权限允许推送到仓库
+# 设置权限允许推送到仓库和部署到 Pages
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
   sync-docs:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: 检出代码
@@ -68,10 +73,34 @@ jobs:
           git commit -m "docs: 自动同步飞书文档 $(date '+%Y-%m-%d %H:%M:%S')"
           git push
 
+      - name: 构建站点
+        if: steps.check_changes.outputs.has_changes == 'true'
+        working-directory: ./app
+        run: npm run build
+        env:
+          SKIP_FEISHU_SYNC: true
+          NODE_ENV: production
+
+      - name: 设置 Pages
+        if: steps.check_changes.outputs.has_changes == 'true'
+        uses: actions/configure-pages@v4
+
+      - name: 上传构建产物
+        if: steps.check_changes.outputs.has_changes == 'true'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: app/build
+
+      - name: 部署到 GitHub Pages
+        if: steps.check_changes.outputs.has_changes == 'true'
+        id: deployment
+        uses: actions/deploy-pages@v4
+
       - name: 完成
         run: |
           if [[ "${{ steps.check_changes.outputs.has_changes }}" == "true" ]]; then
-            echo "✅ 文档已同步并提交"
+            echo "✅ 文档已同步、提交并部署"
+            echo "🌐 部署地址: ${{ steps.deployment.outputs.page_url }}"
           else
             echo "ℹ️ 无需更新"
           fi
