@@ -75,3 +75,12 @@
     margin-top: 0.5rem;
   }
 }
+
+/* Footer 高度优化 */
+.footer {
+  padding: 1rem 0 !important;
+}
+
+.footer__copyright {
+  margin-top: 0 !important;
+}

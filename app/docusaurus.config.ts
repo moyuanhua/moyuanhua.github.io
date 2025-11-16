@@ -15,13 +15,13 @@ const config: Config = {
   },
 
   // Set the production url of your site here
-  url: process.env.SITE_URL || 'https://moyuanhua.github.io',
+  url: 'https://moyuanhua.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
-  baseUrl: process.env.BASE_URL || '/',
+  baseUrl: '/',
 
   // GitHub pages deployment config.
-  organizationName: 'your-username', // Usually your GitHub org/user name.
-  projectName: 'murphy-blog', // Usually your repo name.
+  organizationName: 'moyuanhua', // Usually your GitHub org/user name.
+  projectName: 'moyuanhua.github.io', // Usually your repo name.
 
   onBrokenLinks: 'warn', // 临时设置为 warn 以便构建通过
 
@@ -81,10 +81,11 @@ const config: Config = {
     },
     // Navbar configuration (T012)
     navbar: {
-      title: 'Murphy Blog',
+      title: '',  // 移除标题文字
       logo: {
-        alt: 'Murphy Blog Logo',
+        alt: 'M',
         src: 'img/logo-placeholder.svg',
+        href: '/about-me',  // 点击 logo 进入关于我页面
       },
       items: [
         {
@@ -94,7 +95,7 @@ const config: Config = {
           label: '文档',
         },
         {
-          to: '/about',
+          to: '/about-me',
           label: '关于我',
           position: 'left',
         },
@@ -107,31 +108,7 @@ const config: Config = {
     },
     footer: {
       style: 'dark',
-      links: [
-        {
-          title: '文档',
-          items: [
-            {
-              label: '开始阅读',
-              to: '/',
-            },
-          ],
-        },
-        {
-          title: '链接',
-          items: [
-            {
-              label: '关于我',
-              to: '/about',
-            },
-            {
-              label: 'GitHub',
-              href: 'https://github.com/moyuanhua/moyuanhua.github.io',
-            },
-          ],
-        },
-      ],
-      copyright: `Copyright © ${new Date().getFullYear()} Murphy Blog. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Murphy Blog.`,
     },
     prism: {
       theme: prismThemes.github,
