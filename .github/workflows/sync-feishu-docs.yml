@@ -58,7 +58,7 @@ jobs:
           FEISHU_SPACE_ID=${{ secrets.FEISHU_SPACE_ID }}
           FEISHU_DOCS_NODE_ID=${{ secrets.FEISHU_DOCS_NODE_ID }}
           FEISHU_ABOUT_DOC_ID=${{ secrets.FEISHU_ABOUT_DOC_ID }}
-          FEISHU_INCREMENTAL_DAYS=7
+          FEISHU_INCREMENTAL_DAYS=2
           SKIP_FEISHU_SYNC=false
           SITE_URL=https://moyuanhua.github.io
           EOF
