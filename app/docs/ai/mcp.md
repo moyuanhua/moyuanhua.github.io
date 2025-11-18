@@ -410,7 +410,7 @@ app/
      │    Header: Mcp-Session-Id: abc-123                     │
      ├────────────────────────────────────────────────────────►│
      │                                                         │
-     │                                   从 SessionManager 获取 │
+     │                                   从 SessionManager 获��� │
      │                                   已有的 Server 实例 ✓  │
      │                                   标记为已初始化         │
      │                                                         │
