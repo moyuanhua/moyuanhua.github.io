@@ -799,12 +799,12 @@ live-chat-v2/
     └── src/
         ├── components/         # React 组件
         ├── api/                # API 客户端
-        └── stores/             # 状���存储
+        └── stores/             # 状态存储
 ```
 
 
 
-## **关键��术决策**
+## **关键技术决策**
 
 
 
