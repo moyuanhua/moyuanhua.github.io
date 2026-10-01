@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const BASE = import.meta.env.BASE_URL;
+---
+
+<BaseLayout title="关于 · moyuanhua" description="关于 moyuanhua。">
+  <section class="mx-auto max-w-3xl px-6 py-20">
+    <h1 class="font-heading text-4xl sm:text-5xl tracking-tight text-text font-medium">关于</h1>
+
+    <div class="prose-content mt-10">
+      <p>
+        我是 moyuanhua。早期做小程序、Vue、EggJS，现在主要在造
+        <strong>让 AI Agent 更好用的工具</strong>——把 Agent 接进日常工具、给它可控的权限与审批、
+        让它能真正接管一部分工程任务。
+      </p>
+
+      <h2>在做的事</h2>
+      <ul>
+        <li>把 OpenCode 接进飞书：话题即会话，权限审批在卡片上点按钮</li>
+        <li>给 AI Agent 做的任务流：Agent 执行、人来审批</li>
+        <li>把 GitHub Copilot 变成 OpenAI 兼容 API，接到任何框架里</li>
+      </ul>
+
+      <h2>这个站</h2>
+      <p>
+        用 Astro 静态生成，内容以 HTML 优先的方式写作（
+        <code>src/content/</code> 下的 Markdown 正文可直接写 HTML），
+        部署在 GitHub Pages。没有后端，没有数据库。
+      </p>
+
+      <h2>联系</h2>
+      <ul>
+        <li><a href="https://github.com/moyuanhua" target="_blank" rel="noopener noreferrer">github.com/moyuanhua</a></li>
+        <li><a href="mailto:moyuanhua.ch@gmail.com">moyuanhua.ch@gmail.com</a></li>
+      </ul>
+    </div>
+  </section>
+</BaseLayout>

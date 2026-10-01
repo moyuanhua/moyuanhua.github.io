@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = (await getCollection('writing')).filter((p) => !p.data.draft);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const BASE = import.meta.env.BASE_URL;
+---
+
+<BaseLayout title={`${post.data.title} · moyuanhua`} description={post.data.description}>
+  <article class="mx-auto max-w-3xl px-6 py-16">
+    <a
+      href={`${BASE}writing`}
+      class="inline-flex items-center gap-1 font-mono text-xs text-text-muted hover:text-[var(--color-accent)] transition-colors"
+    >
+      ← 返回文章
+    </a>
+
+    <header class="mt-8 mb-12">
+      <h1 class="font-heading text-3xl sm:text-4xl font-medium text-text leading-tight tracking-tight">
+        {post.data.title}
+      </h1>
+      <time
+        datetime={post.data.date.toISOString()}
+        class="font-mono text-xs text-text-faint block mt-4 uppercase tracking-wider"
+      >
+        {post.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}
+      </time>
+      {post.data.tags.length > 0 && (
+        <div class="flex flex-wrap gap-1.5 mt-4">
+          {post.data.tags.map((tag) => (
+            <span
+              class="inline-flex items-center text-xs font-mono px-2 py-1 border rounded-[3px]"
+              style="border-color: var(--color-border); color: var(--color-text-muted); background: var(--color-surface-2);"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+    </header>
+
+    <div class="prose-content">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>

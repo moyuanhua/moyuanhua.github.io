@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const BASE = import.meta.env.BASE_URL;
+const posts = (await getCollection('writing'))
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const dateFmt = (d: Date) => d.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<BaseLayout title="文章 · moyuanhua" description="关于 AI Agent、工具与构建的思考。">
+  <section class="mx-auto max-w-3xl px-6 pt-20 pb-8">
+    <h1 class="font-heading text-4xl sm:text-5xl tracking-tight text-text font-medium">文章</h1>
+    <p class="mt-4 text-text-muted max-w-[46ch] leading-relaxed">关于 AI Agent、工具，以及构建过程的思考。</p>
+  </section>
+
+  <section class="mx-auto max-w-3xl px-6 pb-24">
+    {posts.length === 0 ? (
+      <p class="font-mono text-sm text-text-faint py-16 text-center">尚无文章。</p>
+    ) : (
+      <ul class="list-none p-0 space-y-8">
+        {posts.map((post) => (
+          <li>
+            <a href={`${BASE}writing/${post.id}`} class="group block">
+              <time class="font-mono text-xs text-text-faint uppercase tracking-wider">{dateFmt(post.data.date)}</time>
+              <h2 class="mt-1 font-heading text-xl text-text group-hover:text-[var(--color-accent)] transition-colors leading-snug">
+                {post.data.title}
+              </h2>
+              <p class="mt-2 text-text-muted leading-relaxed">{post.data.description}</p>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )}
+  </section>
+</BaseLayout>

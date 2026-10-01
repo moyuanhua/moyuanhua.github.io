@@ -1,0 +1,21 @@
+# Astro build output
+dist/
+.astro/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# OpenCode (never commit)
+opencode.json
+.opencode/
+
+# OS / Editor
+.DS_Store
+.vscode/
+.idea/

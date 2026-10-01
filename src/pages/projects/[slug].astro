@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const projects = (await getCollection('projects')).filter((p) => !p.data.draft);
+  return projects.map((project) => ({ params: { slug: project.id }, props: { project } }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const BASE = import.meta.env.BASE_URL;
+const { title, tagline, role, period, stack, repo, live } = project.data;
+---
+
+<BaseLayout title={`${title} · moyuanhua`} description={project.data.description}>
+  <article class="mx-auto max-w-3xl px-6 py-16">
+    <a
+      href={`${BASE}projects`}
+      class="inline-flex items-center gap-1 font-mono text-xs text-text-muted hover:text-[var(--color-accent)] transition-colors"
+    >
+      ← 返回项目
+    </a>
+
+    <header class="mt-8 mb-12">
+      <h1 class="font-heading text-3xl sm:text-4xl font-medium text-text leading-tight tracking-tight">{title}</h1>
+      {tagline && <p class="mt-4 text-lg text-text-muted leading-relaxed">{tagline}</p>}
+
+      <dl class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 border-t border-b py-5" style="border-color: var(--color-border);">
+        {role && (
+          <div>
+            <dt class="font-mono text-[0.65rem] uppercase tracking-wider text-text-faint">角色</dt>
+            <dd class="mt-1 text-sm text-text">{role}</dd>
+          </div>
+        )}
+        {period && (
+          <div>
+            <dt class="font-mono text-[0.65rem] uppercase tracking-wider text-text-faint">时间</dt>
+            <dd class="mt-1 text-sm text-text">{period}</dd>
+          </div>
+        )}
+        {stack.length > 0 && (
+          <div>
+            <dt class="font-mono text-[0.65rem] uppercase tracking-wider text-text-faint">技术</dt>
+            <dd class="mt-1 text-sm text-text">{stack.join(' · ')}</dd>
+          </div>
+        )}
+      </dl>
+
+      {(repo || live) && (
+        <div class="flex gap-3 mt-8 flex-wrap">
+          {live && (
+            <a
+              href={live}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-[6px] font-medium text-sm transition-colors"
+              style="background: var(--color-accent); color: var(--color-bg);"
+            >
+              访问
+            </a>
+          )}
+          {repo && (
+            <a
+              href={repo}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-[6px] border font-medium text-sm transition-colors"
+              style="border-color: var(--color-border); color: var(--color-text);"
+            >
+              GitHub
+            </a>
+          )}
+        </div>
+      )}
+    </header>
+
+    <div class="prose-content">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>
