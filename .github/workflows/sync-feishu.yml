@@ -1,0 +1,89 @@
+name: Sync Feishu Wiki
+
+# Mirror the configured Feishu/Lark wiki space into src/content/writing/feishu.
+# Committing here does NOT trigger the deploy workflow (pushes made with the
+# default GITHUB_TOKEN are not allowed to trigger other workflows), so we
+# explicitly dispatch "Deploy to GitHub Pages" at the end.
+#
+# If the Feishu secrets are not configured yet, the job skips everything and
+# exits green, so the scheduled run is harmless before setup is finished.
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Every 30 minutes. GitHub may delay scheduled runs on a loaded queue.
+    - cron: '*/30 * * * *'
+  repository_dispatch:
+    # Reserved for a real-time relay (Feishu event -> GitHub API).
+    types: [feishu-sync]
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: feishu-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Feishu configuration
+        id: guard
+        env:
+          FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+          FEISHU_SPACE_ID: ${{ secrets.FEISHU_SPACE_ID }}
+        run: |
+          if [ -z "$FEISHU_APP_ID" ] || [ -z "$FEISHU_APP_SECRET" ] || [ -z "$FEISHU_SPACE_ID" ]; then
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Sync skipped::FEISHU_APP_ID / FEISHU_APP_SECRET / FEISHU_SPACE_ID not configured. See docs/feishu-sync.md."
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.guard.outputs.configured == 'true'
+
+      - uses: actions/setup-node@v4
+        if: steps.guard.outputs.configured == 'true'
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        if: steps.guard.outputs.configured == 'true'
+        run: npm ci
+
+      - name: Sync wiki → content
+        if: steps.guard.outputs.configured == 'true'
+        env:
+          FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+          FEISHU_SPACE_ID: ${{ secrets.FEISHU_SPACE_ID }}
+          # FEISHU_ENDPOINT: https://open.larksuite.com   # uncomment for Lark (international)
+          # FEISHU_ROOT_NODE_TOKEN: wikcnXXXX             # uncomment to sync one subtree only
+        run: node scripts/sync-feishu.mjs
+
+      - name: Commit changes
+        id: commit
+        if: steps.guard.outputs.configured == 'true'
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No content changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore(feishu): sync wiki content"
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Trigger deploy
+        if: steps.guard.outputs.configured == 'true' && steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml --ref "${{ github.ref_name }}"
