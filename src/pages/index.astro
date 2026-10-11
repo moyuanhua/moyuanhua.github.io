@@ -3,56 +3,101 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
 const BASE = import.meta.env.BASE_URL;
+const EMAIL = 'moyuanhua.ch@gmail.com';
 
 const projects = (await getCollection('projects'))
   .filter((p) => !p.data.draft)
-  .sort((a, b) => a.data.order - b.data.order);
+  .sort((a, b) => {
+    if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+    return a.data.order - b.data.order;
+  });
 
 const writing = (await getCollection('writing'))
   .filter((p) => !p.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
 const recent = writing.slice(0, 3);
+const featured = projects.slice(0, 3);
 const dateFmt = (d: Date) => d.toLocaleDateString('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' });
 ---
 
-<BaseLayout title="moyuanhua · AI Agent 工具" description="moyuanhua 的个人站：AI Agent 工具与它的思考。">
+<BaseLayout
+  title="moyuanhua · 独立站 × AI 可见度"
+  description="懂 Shopify 跨境，也自己写代码造 AI 工具。记录「AI 怎么改变独立站生意」。"
+>
+  <!-- 定位 -->
   <section class="mx-auto max-w-3xl px-6 pt-20 pb-16">
     <h1 class="font-heading text-4xl sm:text-5xl tracking-tight leading-[1.1] text-text font-medium">
       moyuanhua
     </h1>
-    <p class="mt-6 text-lg text-text-muted leading-relaxed max-w-[46ch]">
-      我造让 <span class="font-mono text-[var(--color-accent)]">AI Agent</span> 更好用的工具，
-      也在记录这些构建背后的思考。
+    <p class="mt-6 text-lg text-text-muted leading-relaxed max-w-[48ch]">
+      做了多年 Shopify 跨境，也自己写代码造 <span class="font-mono text-[var(--color-accent)]">AI 工具</span>。
+      这里记录<strong class="text-text">「AI 怎么改变独立站生意」</strong>——从 AI 搜索可见度，到 AI 售前客服。
     </p>
     <div class="mt-8 flex flex-wrap gap-3">
       <a
-        href={`${BASE}projects`}
+        href={`${BASE}writing`}
         class="inline-flex items-center gap-2 rounded-[6px] px-5 py-2.5 text-sm font-medium transition-transform active:translate-y-px"
         style="background: var(--color-accent); color: var(--color-bg);"
+      >
+        读文章
+      </a>
+      <a
+        href={`${BASE}projects`}
+        class="inline-flex items-center gap-2 rounded-[6px] px-5 py-2.5 text-sm font-medium border transition-colors"
+        style="border-color: var(--color-border); color: var(--color-text);"
       >
         看项目
       </a>
       <a
-        href={`${BASE}writing`}
+        href={`${BASE}about`}
         class="inline-flex items-center gap-2 rounded-[6px] px-5 py-2.5 text-sm font-medium border transition-colors"
         style="border-color: var(--color-border); color: var(--color-text);"
       >
-        读文章
+        关于 / 联系
       </a>
     </div>
   </section>
 
-  {projects.length > 0 && (
+  {recent.length > 0 && (
     <section class="mx-auto max-w-3xl px-6 pb-16">
       <div class="flex items-baseline justify-between border-b pb-3 mb-6" style="border-color: var(--color-border);">
-        <h2 class="font-heading text-xl text-text font-medium">项目</h2>
+        <h2 class="font-heading text-xl text-text font-medium">最新文章</h2>
+        <a href={`${BASE}writing`} class="font-mono text-xs text-text-muted hover:text-[var(--color-accent)] transition-colors">
+          全部 {writing.length}
+        </a>
+      </div>
+      <ul class="list-none p-0 space-y-6">
+        {recent.map((post) => (
+          <li>
+            <a href={`${BASE}writing/${post.id}`} class="group block">
+              <div class="flex items-center gap-2 flex-wrap">
+                <time class="font-mono text-xs text-text-faint uppercase tracking-wider">{dateFmt(post.data.date)}</time>
+                {post.data.tags.map((t) => (
+                  <span class="font-mono text-[0.65rem] text-text-faint">#{t}</span>
+                ))}
+              </div>
+              <h3 class="mt-1 font-heading text-lg text-text group-hover:text-[var(--color-accent)] transition-colors">
+                {post.data.title}
+              </h3>
+              <p class="mt-1 text-sm text-text-muted leading-relaxed">{post.data.description}</p>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {featured.length > 0 && (
+    <section class="mx-auto max-w-3xl px-6 pb-16">
+      <div class="flex items-baseline justify-between border-b pb-3 mb-6" style="border-color: var(--color-border);">
+        <h2 class="font-heading text-xl text-text font-medium">精选项目</h2>
         <a href={`${BASE}projects`} class="font-mono text-xs text-text-muted hover:text-[var(--color-accent)] transition-colors">
           全部 {projects.length}
         </a>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {projects.map((project) => (
+        {featured.map((project) => (
           <a
             href={`${BASE}projects/${project.id}`}
             class="group block p-5 rounded-[6px] border transition-colors"
@@ -73,27 +118,31 @@ const dateFmt = (d: Date) => d.toLocaleDateString('zh-CN', { year: 'numeric', mo
     </section>
   )}
 
-  {recent.length > 0 && (
-    <section class="mx-auto max-w-3xl px-6 pb-24">
-      <div class="flex items-baseline justify-between border-b pb-3 mb-6" style="border-color: var(--color-border);">
-        <h2 class="font-heading text-xl text-text font-medium">最近文章</h2>
-        <a href={`${BASE}writing`} class="font-mono text-xs text-text-muted hover:text-[var(--color-accent)] transition-colors">
-          全部 {writing.length}
+  <!-- 联系 -->
+  <section class="mx-auto max-w-3xl px-6 pb-24">
+    <div class="border-t pt-8" style="border-color: var(--color-border);">
+      <h2 class="font-heading text-xl text-text font-medium">联系</h2>
+      <p class="mt-3 text-text-muted leading-relaxed max-w-[46ch]">
+        独立站相关的 AI 问题，或想聊聊合作，直接找我。
+      </p>
+      <div class="mt-4 flex flex-wrap gap-3">
+        <a
+          href={`mailto:${EMAIL}`}
+          class="inline-flex items-center gap-2 rounded-[6px] px-5 py-2.5 text-sm font-medium border transition-colors"
+          style="border-color: var(--color-border); color: var(--color-text);"
+        >
+          {EMAIL}
+        </a>
+        <a
+          href="https://github.com/moyuanhua"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 rounded-[6px] px-5 py-2.5 text-sm font-medium border transition-colors"
+          style="border-color: var(--color-border); color: var(--color-text);"
+        >
+          GitHub
         </a>
       </div>
-      <ul class="list-none p-0 space-y-6">
-        {recent.map((post) => (
-          <li>
-            <a href={`${BASE}writing/${post.id}`} class="group block">
-              <time class="font-mono text-xs text-text-faint uppercase tracking-wider">{dateFmt(post.data.date)}</time>
-              <h3 class="mt-1 font-heading text-lg text-text group-hover:text-[var(--color-accent)] transition-colors">
-                {post.data.title}
-              </h3>
-              <p class="mt-1 text-sm text-text-muted leading-relaxed">{post.data.description}</p>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </section>
-  )}
+    </div>
+  </section>
 </BaseLayout>

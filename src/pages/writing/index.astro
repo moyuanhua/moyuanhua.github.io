@@ -10,10 +10,10 @@ const posts = (await getCollection('writing'))
 const dateFmt = (d: Date) => d.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
 ---
 
-<BaseLayout title="文章 · moyuanhua" description="关于 AI Agent、工具与构建的思考。">
+<BaseLayout title="文章 · moyuanhua" description="独立站 × AI 可见度，以及构建过程中的笔记。">
   <section class="mx-auto max-w-3xl px-6 pt-20 pb-8">
     <h1 class="font-heading text-4xl sm:text-5xl tracking-tight text-text font-medium">文章</h1>
-    <p class="mt-4 text-text-muted max-w-[46ch] leading-relaxed">关于 AI Agent、工具，以及构建过程的思考。</p>
+    <p class="mt-4 text-text-muted max-w-[46ch] leading-relaxed">独立站 × AI 可见度，以及构建过程中的笔记。</p>
   </section>
 
   <section class="mx-auto max-w-3xl px-6 pb-24">
@@ -24,11 +24,31 @@ const dateFmt = (d: Date) => d.toLocaleDateString('zh-CN', { year: 'numeric', mo
         {posts.map((post) => (
           <li>
             <a href={`${BASE}writing/${post.id}`} class="group block">
-              <time class="font-mono text-xs text-text-faint uppercase tracking-wider">{dateFmt(post.data.date)}</time>
+              <div class="flex items-center gap-2 flex-wrap">
+                <time class="font-mono text-xs text-text-faint uppercase tracking-wider">{dateFmt(post.data.date)}</time>
+                {post.data.type !== 'essay' && (
+                  <span
+                    class="font-mono text-[0.65rem] uppercase tracking-wider px-1.5 py-0.5 rounded-[3px]"
+                    style="background: var(--color-accent-soft); color: var(--color-accent-2);"
+                  >
+                    {post.data.type}
+                  </span>
+                )}
+                {post.data.updated && post.data.updated.valueOf() !== post.data.date.valueOf() && (
+                  <span class="font-mono text-[0.65rem] text-text-faint">更新</span>
+                )}
+              </div>
               <h2 class="mt-1 font-heading text-xl text-text group-hover:text-[var(--color-accent)] transition-colors leading-snug">
                 {post.data.title}
               </h2>
               <p class="mt-2 text-text-muted leading-relaxed">{post.data.description}</p>
+              {post.data.tags.length > 0 && (
+                <p class="mt-2 flex flex-wrap gap-2">
+                  {post.data.tags.map((t) => (
+                    <span class="font-mono text-[0.65rem] text-text-faint">#{t}</span>
+                  ))}
+                </p>
+              )}
             </a>
           </li>
         ))}

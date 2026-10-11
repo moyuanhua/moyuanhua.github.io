@@ -1,37 +1,42 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-const BASE = import.meta.env.BASE_URL;
+const EMAIL = 'moyuanhua.ch@gmail.com';
 ---
 
-<BaseLayout title="关于 · moyuanhua" description="关于 moyuanhua。">
+<BaseLayout title="关于 · moyuanhua" description="moyuanhua：懂 Shopify 跨境，也自己写代码造 AI 工具。">
   <section class="mx-auto max-w-3xl px-6 py-20">
     <h1 class="font-heading text-4xl sm:text-5xl tracking-tight text-text font-medium">关于</h1>
 
     <div class="prose-content mt-10">
       <p>
-        我是 moyuanhua。早期做小程序、Vue、EggJS，现在主要在造
-        <strong>让 AI Agent 更好用的工具</strong>——把 Agent 接进日常工具、给它可控的权限与审批、
-        让它能真正接管一部分工程任务。
+        我是<strong>moyuanhua</strong>。做了多年 Shopify 跨境电商，独立站的选品、投放、运营都一手做过；
+        同时一直在写代码——早期小程序、Vue、EggJS，现在主要造
+        <strong>让 AI Agent 更好用的工具</strong>。
+      </p>
+      <p>
+        现在这两件事合成了一件：<strong>用 AI 改变独立站这门生意</strong>。
+        我在研究 AI 搜索时代一家店怎么被"找到"（GEO / AI 可见度），
+        也在做 AI 怎么把 AI 带来的流量"接住"（AI 售前客服）。
       </p>
 
       <h2>在做的事</h2>
       <ul>
-        <li>把 OpenCode 接进飞书：话题即会话，权限审批在卡片上点按钮</li>
-        <li>给 AI Agent 做的任务流：Agent 执行、人来审批</li>
-        <li>把 GitHub Copilot 变成 OpenAI 兼容 API，接到任何框架里</li>
+        <li>独立站的<strong> AI 可见度</strong>：站点技术改造（llms.txt / 结构化事实 / 商品 feed）+ 跨模型提及率监测</li>
+        <li>电商 <strong>AI 售前客服</strong>：LangChain / LangGraph + Shopify，把 AI 流量接成订单</li>
+        <li>让 Agent 接管一部分工程：把 OpenCode 接进飞书，权限审批在卡片上点按钮</li>
       </ul>
 
       <h2>这个站</h2>
       <p>
-        用 Astro 静态生成，内容以 HTML 优先的方式写作（
-        <code>src/content/</code> 下的 Markdown 正文可直接写 HTML），
-        部署在 GitHub Pages。没有后端，没有数据库。
+        用 Astro 静态生成，内容以 HTML 优先的方式写作（<code>src/content/</code> 下的 Markdown 正文可直接写 HTML），
+        部署在 GitHub Pages。没有后端，没有数据库。文章主要在<strong>飞书知识库</strong>里写，再同步到这里。
       </p>
 
       <h2>联系</h2>
+      <!-- TODO: 补微信号 / 微信二维码 -->
       <ul>
+        <li><a href={`mailto:${EMAIL}`}>{EMAIL}</a></li>
         <li><a href="https://github.com/moyuanhua" target="_blank" rel="noopener noreferrer">github.com/moyuanhua</a></li>
-        <li><a href="mailto:moyuanhua.ch@gmail.com">moyuanhua.ch@gmail.com</a></li>
       </ul>
     </div>
   </section>

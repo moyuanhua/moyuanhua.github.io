@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const BASE = import.meta.env.BASE_URL;
+---
+
+<BaseLayout title="404 · moyuanhua" description="页面不存在。">
+  <section class="mx-auto max-w-3xl px-6 py-24 text-center">
+    <p class="font-mono text-sm text-text-faint uppercase tracking-wider">404</p>
+    <h1 class="mt-4 font-heading text-3xl sm:text-4xl font-medium text-text">这页找不到了</h1>
+    <p class="mt-4 text-text-muted">链接可能过期，或者我把它挪走了。</p>
+    <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <a
+        href={BASE}
+        class="inline-flex items-center gap-2 rounded-[6px] px-5 py-2.5 text-sm font-medium"
+        style="background: var(--color-accent); color: var(--color-bg);"
+      >
+        回首页
+      </a>
+      <a
+        href={`${BASE}writing`}
+        class="inline-flex items-center gap-2 rounded-[6px] px-5 py-2.5 text-sm font-medium border"
+        style="border-color: var(--color-border); color: var(--color-text);"
+      >
+        读文章
+      </a>
+    </div>
+  </section>
+</BaseLayout>

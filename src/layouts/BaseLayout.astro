@@ -9,13 +9,65 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description?: string;
+  /** og:type；文章页传 'article' */
+  ogType?: 'website' | 'article';
+  /** 文章：发布 / 修改时间（ISO），用于 BlogPosting JSON-LD */
+  publishedTime?: string;
+  modifiedTime?: string;
+  tags?: string[];
 }
 const {
   title,
-  description = 'moyuanhua 的个人站：AI Agent 工具与它的思考。',
+  description = 'moyuanhua：懂 Shopify 跨境，也自己写代码造 AI 工具。记录「AI 怎么改变独立站生意」。',
+  ogType = 'website',
+  publishedTime,
+  modifiedTime,
+  tags = [],
 } = Astro.props;
 
 const BASE = import.meta.env.BASE_URL;
+const SITE_URL = (Astro.site ?? new URL('https://moyuanhua.github.io')).href.replace(/\/$/, '');
+const canonical = new URL(Astro.url.pathname, SITE_URL).href;
+const personId = `${SITE_URL}/#person`;
+const websiteId = `${SITE_URL}/#website`;
+const graph: Record<string, unknown>[] = [
+  {
+    '@type': 'WebSite',
+    '@id': websiteId,
+    url: SITE_URL,
+    name: 'moyuanhua',
+    description,
+    inLanguage: 'zh-CN',
+    publisher: { '@id': personId },
+  },
+  {
+    '@type': 'Person',
+    '@id': personId,
+    name: 'moyuanhua',
+    url: SITE_URL,
+    email: 'moyuanhua.ch@gmail.com',
+    sameAs: ['https://github.com/moyuanhua'],
+    description: '懂 Shopify 跨境，也自己写代码造 AI 工具。研究 AI 怎么改变独立站生意。',
+  },
+];
+if (ogType === 'article') {
+  graph.push({
+    '@type': 'BlogPosting',
+    '@id': `${canonical}#article`,
+    headline: title,
+    description,
+    url: canonical,
+    inLanguage: 'zh-CN',
+    mainEntityOfPage: canonical,
+    author: { '@id': personId },
+    isPartOf: { '@id': websiteId },
+    ...(publishedTime ? { datePublished: publishedTime } : {}),
+    ...(modifiedTime ? { dateModified: modifiedTime } : {}),
+    ...(tags.length ? { keywords: tags.join(', ') } : {}),
+  });
+}
+const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
+
 const navLinks = [
   { href: `${BASE}projects`, label: '项目' },
   { href: `${BASE}writing`, label: '文章' },
@@ -38,6 +90,17 @@ const year = new Date().getFullYear();
     <meta name="description" content={description} />
     <title>{title}</title>
     <link rel="icon" type="image/svg+xml" href={`${BASE}favicon.svg`} sizes="any" />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content="moyuanhua" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <script type="application/ld+json" set:html={jsonLd} />
   </head>
   <body class="bg-bg text-text min-h-screen flex flex-col font-body antialiased">
     <header class="sticky top-0 z-40 bg-bg/85 backdrop-blur-md border-b border-border">
@@ -73,14 +136,22 @@ const year = new Date().getFullYear();
     <footer class="border-t border-border mt-20">
       <div class="mx-auto max-w-3xl px-6 py-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <p class="font-mono text-xs text-text-muted">© {year} moyuanhua</p>
-        <a
-          href="https://github.com/moyuanhua"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="font-mono text-xs text-text-muted hover:text-[var(--color-accent)] transition-colors"
-        >
-          github.com/moyuanhua
-        </a>
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
+          <a
+            href="mailto:moyuanhua.ch@gmail.com"
+            class="font-mono text-xs text-text-muted hover:text-[var(--color-accent)] transition-colors"
+          >
+            moyuanhua.ch@gmail.com
+          </a>
+          <a
+            href="https://github.com/moyuanhua"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="font-mono text-xs text-text-muted hover:text-[var(--color-accent)] transition-colors"
+          >
+            github.com/moyuanhua
+          </a>
+        </div>
       </div>
     </footer>
   </body>
