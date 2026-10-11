@@ -13,6 +13,7 @@
     "sync:feishu": "node scripts/sync-feishu.mjs"
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
     "@fontsource/geist": "5.2.9",
     "@fontsource/geist-mono": "5.2.8",
     "@tailwindcss/vite": "4.3.0",

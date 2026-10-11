@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
 // Minimal static personal site.
@@ -9,6 +10,7 @@ export default defineConfig({
   site: process.env.SITE || 'https://moyuanhua.github.io',
   // Normalize base to always end with `/` so `${BASE}projects` is well formed.
   base: (process.env.BASE_PATH || '/').replace(/\/?$/, '/'),
+  integrations: [sitemap()],
   vite: {
     plugins: [tailwindcss()],
   },
