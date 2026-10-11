@@ -378,6 +378,7 @@ async function main() {
   const prev = readManifest();
   const next = { files: [], assets: [] };
   const keep = new Set(); // files whose doc failed this run: do not treat as deleted
+  const usedLeaf = new Set(); // 防止文档声明的 slug 互相覆盖
   let written = 0;
   let failures = 0;
 
@@ -388,9 +389,20 @@ async function main() {
       continue;
     }
     const segs = segsFor(node);
-    const fileAbs = path.join(OUT_ABS, ...segs.slice(0, -1), `${segs[segs.length - 1]}.md`);
+    let fileAbs = path.join(OUT_ABS, ...segs.slice(0, -1), `${segs[segs.length - 1]}.md`);
     try {
       const { markdown, fileTokens, meta } = await renderNode(node);
+      // 文档首块 YAML 里的 slug 可覆盖文件名，mapping 到干净 URL：
+      // 节点标题保持中文（飞书里好读），URL 用 slug，如 slug: ai-visibility-77-stores
+      if (meta.slug) {
+        let s = toAsciiSlug(meta.slug);
+        if (s) {
+          if (usedLeaf.has(s)) s = `${s}-${shortHash(node.node_token)}`;
+          usedLeaf.add(s);
+          segs[segs.length - 1] = s;
+          fileAbs = path.join(OUT_ABS, ...segs.slice(0, -1), `${s}.md`);
+        }
+      }
       if (!markdown.trim()) {
         log(`skip  ${node.obj_token}  ${node.title}  (empty)`);
         continue;

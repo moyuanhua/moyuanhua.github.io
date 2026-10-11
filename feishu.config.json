@@ -1,14 +1,14 @@
 {
-  "spaceId": "",
+  "spaceId": "7695343399829785883",
   "rootNodeToken": "",
   "output": "src/content/writing/feishu",
   "assets": "public/writing-assets/feishu",
   "assetsUrlBase": "/writing-assets/feishu",
   "dateFrom": "obj_edit_time",
-  "defaultTags": ["feishu"],
+  "defaultTags": [],
   "draft": false,
   "titlePrefix": "",
   "publishMarker": "",
   "excludeNodeTokens": [],
-  "excludeTitlePatterns": []
+  "excludeTitlePatterns": ["^_"]
 }
