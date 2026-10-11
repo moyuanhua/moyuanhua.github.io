@@ -1,8 +1,9 @@
 # moyuanhua.github.io
 
-极简个人站：展示项目 + 记录关于 AI Agent 的思考。
+极简个人站：记录「AI 怎么改变独立站生意」——AI 搜索可见度（GEO）与电商 AI 售前客服。
 
-- **技术栈**：Astro（静态输出）+ Tailwind CSS v4。无后端、无数据库。
+- **技术栈**：Astro（静态输出）+ Tailwind CSS v4 + `@astrojs/sitemap`。无后端、无数据库。
+- **AI 可发现性**：构建时自动生成 `/llms.txt`、`/llms-full.txt`、`/agents.md`、`/robots.txt`、`/sitemap-index.xml`；全站带 JSON-LD、canonical、og 标签。
 - **部署**：GitHub Pages（user site）。push 到 `main` → Actions 构建 → 发布到 https://moyuanhua.github.io
 - **内容**：`src/content/` 下的 Markdown，正文可直接写 HTML。既有手写文章，也支持飞书知识库自动同步。
 
@@ -26,12 +27,17 @@ src/
     writing/feishu/**          # 飞书知识库同步产出（自动生成，勿手改）
   layouts/BaseLayout.astro
   pages/
-    index.astro                # 首页：简介 + 项目 + 最近文章
+    index.astro                # 首页：定位 + 最新文章 + 精选项目 + 联系
     projects/index.astro       # 项目列表
     projects/[slug].astro      # 项目详情
     writing/index.astro        # 文章列表
     writing/[slug].astro       # 文章详情
     about.astro                # 关于
+    404.astro                  # 404
+    robots.txt.ts              # → /robots.txt
+    llms.txt.ts                # → /llms.txt（给 LLM 的内容索引）
+    llms-full.txt.ts           # → /llms-full.txt（所有文章全文）
+    agents.md.ts               # → /agents.md（给 AI Agent 的站点说明）
   styles/global.css            # 设计 token + prose 排版
 public/
   writing-assets/feishu/**     # 飞书同步下来的图片 / 画板
