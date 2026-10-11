@@ -407,7 +407,9 @@ async function main() {
       const front = ['---'];
       front.push(`title: ${yamlScalar(title)}`);
       front.push(`date: ${yamlScalar(date)}`);
+      if (meta.updated) front.push(`updated: ${yamlScalar(String(meta.updated))}`);
       front.push(`description: ${yamlScalar(description)}`);
+      if (meta.type) front.push(`type: ${yamlScalar(String(meta.type))}`);
       front.push(`tags: [${tags.map(yamlScalar).join(', ')}]`);
       if (draft) front.push('draft: true');
       front.push('---', '');

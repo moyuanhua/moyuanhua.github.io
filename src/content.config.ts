@@ -21,12 +21,18 @@ const projects = defineCollection({
 });
 
 // Writing = AI notes / essays / build logs. Body is HTML-first too.
+// 文件名以下划线开头的文件（如 _template.md）= 模板，不进入集合。
 const writing = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/writing' }),
+  loader: glob({ pattern: '**/[^_]*.md', base: './src/content/writing' }),
   schema: z.object({
     title: z.string(),
     date: z.coerce.date(),
+    // 有实质修改时才填 updated；用于展示"更新于"。
+    updated: z.coerce.date().optional(),
     description: z.string(),
+    // 内容形态：essay 长文 / note 短记 / log 构建日志。
+    type: z.enum(['essay', 'note', 'log']).optional().default('essay'),
+    // 受控词表：每篇 ≤3 个，见 src/content/writing/_template.md。
     tags: z.array(z.string()).optional().default([]),
     draft: z.boolean().optional().default(false),
   }),

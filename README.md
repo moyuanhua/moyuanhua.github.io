@@ -66,14 +66,16 @@ order: 1
 
 正文写 case study（背景 / 做法 / 结果 / 学到什么），可以直接用 HTML。
 
-**加一篇文章**：在 `src/content/writing/` 新建 `<slug>.md`：
+**加一篇文章**：复制 `src/content/writing/_template.md`，改名成 `<slug>.md`（文件名以 `_` 开头不会被发布）：
 
 ```yaml
 ---
 title: 标题
 date: 2026-01-01
+updated: 2026-01-01        # 可选：有实质修改时填，显示「更新于」
 description: 摘要
-tags: [ai]
+type: essay                # essay 长文 | note 短记 | log 构建日志
+tags: [ai]                 # 受控词表，每篇 ≤3 个
 ---
 ```
 
