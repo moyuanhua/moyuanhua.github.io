@@ -3,17 +3,27 @@
 /* ─────────────────────────────────────────────────────────────────────────
    Design tokens: dual-mode (light default, dark via prefers-color-scheme).
    Single accent: teal. Warm neutrals. Do not add a second accent.
+
+   KEEP THIS @theme NON-INLINE.
+   `@theme inline` bakes the literal light value into every utility
+   (`.bg-bg { background-color: #f4f1ea }`, `.text-text { color: #1c1b18 }`),
+   so the prefers-color-scheme override below can never reach the utilities —
+   while hand-written rules such as `.prose-content { color: var(--color-text) }`
+   still do flip. In dark mode that painted dark-mode text (#ece8e1) over a
+   frozen light background (#f4f1ea): the resume body rendered at ~1.05:1
+   contrast, i.e. invisible. Non-inline keeps utilities on `var(--color-*)`,
+   so one source of truth drives every surface.
    ────────────────────────────────────────────────────────────────────── */
-@theme inline {
+@theme {
   --color-bg:          #f4f1ea;
   --color-surface:     #ece8dd;
   --color-surface-2:   #e0dccf;
   --color-text:        #1c1b18;
-  --color-text-muted:  rgba(28, 27, 24, 0.62);
-  --color-text-faint:  rgba(28, 27, 24, 0.32);
-  --color-accent:      #0d9488;
-  --color-accent-2:    #14908a;
-  --color-accent-soft: rgba(13, 148, 136, 0.12);
+  --color-text-muted:  rgba(28, 27, 24, 0.70);
+  --color-text-faint:  rgba(28, 27, 24, 0.64);
+  --color-accent:      #0f766e;
+  --color-accent-2:    #115e59;
+  --color-accent-soft: rgba(15, 118, 110, 0.10);
   --color-border:      rgba(28, 27, 24, 0.10);
 
   --font-heading: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -22,31 +32,23 @@
 }
 
 :root {
-  color-scheme: light dark;
-  --color-bg:          #f4f1ea;
-  --color-surface:     #ece8dd;
-  --color-surface-2:   #e0dccf;
-  --color-text:        #1c1b18;
-  --color-text-muted:  rgba(28, 27, 24, 0.62);
-  --color-text-faint:  rgba(28, 27, 24, 0.32);
-  --color-accent:      #0d9488;
-  --color-accent-2:    #14908a;
-  --color-accent-soft: rgba(13, 148, 136, 0.12);
-  --color-border:      rgba(28, 27, 24, 0.10);
+  color-scheme: light;
 }
 
+/* The only place tokens are re-declared. Everything above stays light-mode. */
 @media (prefers-color-scheme: dark) {
   :root {
+    color-scheme: dark;
     --color-bg:          #0f0d0b;
     --color-surface:     #16120e;
     --color-surface-2:   #1f1a14;
     --color-text:        #ece8e1;
-    --color-text-muted:  rgba(236, 232, 225, 0.62);
-    --color-text-faint:  rgba(236, 232, 225, 0.32);
+    --color-text-muted:  rgba(236, 232, 225, 0.66);
+    --color-text-faint:  rgba(236, 232, 225, 0.54);
     --color-accent:      #5eead4;
     --color-accent-2:    #7fddd0;
     --color-accent-soft: rgba(94, 234, 212, 0.12);
-    --color-border:      rgba(236, 232, 225, 0.08);
+    --color-border:      rgba(236, 232, 225, 0.10);
   }
 }
 
