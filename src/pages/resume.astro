@@ -5,111 +5,124 @@ const EMAIL = 'moyuanhua.ch@gmail.com';
 
 <BaseLayout
   title="简历 · moyuanhua"
-  description="莫远华（Murphy Mo）：10 年后端，其中跨境电商 DTC 近 5 年、带 6 人团队 2 年、技术合伙创业一次。做 AI 应用工程与 Agent 交付。"
+  description="莫远华（Murphy Mo）：11 年后端。做过在线问诊、社区约号、独立站售前 AI 和建站提效。带过 6 人团队，自己创业失败过一次。"
   ogType="profile"
 >
   <section class="mx-auto max-w-3xl px-6 py-20">
     <h1 class="font-heading text-4xl sm:text-5xl tracking-tight text-text font-medium">简历</h1>
-    <p class="mt-4 text-text-muted">莫远华 / Murphy Mo ｜ 后端工程师（10 年）· AI Agent 工程 · 交付型（FDE）</p>
+    <p class="mt-4 text-text-muted">莫远华 / Murphy Mo ｜ 后端工程师 · AI 应用与交付 ｜ 11 年</p>
 
     <div class="prose-content mt-10">
       <p>
-        <strong>10 年后端</strong>，其中跨境电商 DTC <strong>4.9 年</strong>、带 <strong>6 人</strong>团队 2 年、
-        技术合伙创业一次（3 人团队，课程预约小程序）。
-        擅长<strong>在客户现场把模糊需求翻译成可交付的技术方案</strong>：从业务语言里定位真正的问题，
-        给出当下最优解，并在资源有限时判断"什么先做、什么不做"。
+        2015 年开始写代码，先做 .NET，后来主要写 Node。
       </p>
       <p>
-        做过的系统有一条清楚的主线：<strong>在线会话系统 7 年</strong>——
-        2019 年的在线问诊 / 在线聊天，到 2026 年的独立站售前 AI。
-        中间换的是模型和场景，不变的是：<strong>会话要能被分类、被度量、被兜底</strong>。
+        2018 年跟两个人合伙做过一个面向培训机构的课程预约小程序。技术端三个月上线，
+        但谈好的机构放了鸽子，我们也没钱推广，项目停在原地。那是我第一次知道：
+        系统做出来和有人用，中间隔着很远。
+      </p>
+      <p>
+        2019 年进了一家做社区服务的公司带后端组，六个人，做社区约号和婴幼儿健康咨询的在线问诊系统。
+        2021 年底到安克，做跨境电商独立站。现在主要两块：独立站的售前 AI，和用 AI 把建站流程压短。
       </p>
 
-      <h2>关键数字</h2>
+      <h2>现在在做的两件事</h2>
+
+      <h3>独立站售前 AI（全权负责，配 1 名 PM）</h3>
+      <p>
+        用户进线后很少问“买哪个”。多数是“这有没有配件”“能不能配别的型号”“我这个坏了怎么弄”。
+        我们把这些会话按问题场景分类，先解决他的实际问题，再按场景推荐。
+      </p>
+      <p>
+        顺带发现一件事：产品页真正缺的不是商品描述，是<strong>兼容性对照表、故障排查、配件清单</strong>——
+        用户问什么，页面就该有什么。这块内容平台不给模板，只能自己补。
+      </p>
+
+      <h3>建站 AI（全年负责）</h3>
+      <p>
+        没有一上来做全链路。先把建站拆成 8–12 步，量出每步当前耗时、谁在做、哪里最容易返工，
+        然后只自动化最脏的一步，跑真实站点看周期有没有动，再往后连。
+      </p>
+
+      <h2>带过的人和扛过的事</h2>
       <ul>
-        <li><strong>10 年</strong>软件工程经验（2015 起）</li>
-        <li><strong>4.9 年</strong>跨境电商 / 独立站 DTC</li>
-        <li><strong>6 人</strong>团队管理（Node.js 后端组长，2 年）</li>
-        <li><strong>849 个测试</strong>的 Agent 集成项目，零公网端点</li>
-        <li><strong>77 家</strong>独立站的 AI 可发现性实测（唯一独立数据源）</li>
+        <li>2019–2021 带 6 人（2 后端 / 2 前端 / 1 UI / 1 测试），交付社区约号系统和在线问诊系统。</li>
+        <li>2018 年创业，3 人团队，技术全部我负责：小程序、后端、部署。</li>
+        <li>现在负责独立站售前 AI，配 1 名 PM，从需求到上线都是我一个人推。</li>
       </ul>
+
+      <h2>线上踩过的坑</h2>
+      <p>
+        做消息平台和 Agent 集成时，踩过三类不报错的问题，都是安静地不对：
+      </p>
+      <ul>
+        <li>进程号被系统复用，旧锁还判有效，会话永久卡死 → 锁改成按会话粒度，不再看 pid。</li>
+        <li>平台重推消息晚到，过期指令被当成新指令执行 → 加 120 秒时效窗口，超时直接丢弃。</li>
+        <li>收发两侧字段名不一致，兜底分支静默失效 → 加字段校验，宁可报错也不要安静降级。</li>
+      </ul>
+      <p>
+        这类问题的共同点是：不报错，所以最贵。后来我做集成，宁可显式失败。
+      </p>
 
       <h2>工作经历</h2>
 
       <h3>安克创新 Anker Innovations ｜ 2021.12 – 至今</h3>
-      <p class="text-text-muted text-sm">软件工程师（后端）· CEMO-DTC Central-平台能力 · 长沙</p>
+      <p class="text-text-muted text-sm">软件工程师（后端）· 独立站 DTC</p>
       <ul>
-        <li>
-          <strong>独立站售前 AI（全权负责，带 1 名 PM）</strong>：
-          把用户进线的<strong>售后问题流</strong>（缺配件 / 兼容性 / 故障排查）分类成场景信号，
-          在解决实际问题之后再做商品推荐——售前是建立在售后问题上的二次动作；
-          并把这批问题反推成产品页的内容缺口（兼容性对照表、故障排查、配件清单）。
-        </li>
-        <li>
-          <strong>建站 AI（全年负责推进）</strong>：
-          先把建站流程拆成 8–12 步并量化基线（耗时 / 责任人 / 返工点），再单点自动化 → 链路自动化；
-          用评测集代替"改完人工看一遍"，让每次改动可回归。
-        </li>
-        <li>
-          <strong>工程方法</strong>：评测集三要素（输入 / 参考标准 / 判分方法）+ 四层抽样（高频 / 失败 / 边界 / 红线），
-          把"感觉变好了"变成可重复执行的检查项。
-        </li>
+        <li>独立站售前 AI：会话场景分类、售后问题转售前推荐、内容缺口反推。</li>
+        <li>建站 AI：流程基线、单点自动化到链路自动化、用评测集做回归。</li>
       </ul>
 
       <h3>西安图灵网络技术 ｜ 2019.05 – 2021.07</h3>
-      <p class="text-text-muted text-sm">Node.js 后端开发组长 · 带 6 人（2 后端 / 2 前端 / 1 UI / 1 测试）</p>
+      <p class="text-text-muted text-sm">Node.js 后端组长 · 带 6 人</p>
       <ul>
-        <li>面向西安社区的<strong>约号 / 预约系统</strong>：排期、号源、并发控制。</li>
-        <li>面向婴幼儿健康培育的<strong>在线咨询系统</strong>：在线聊天 + 在线问诊，公司自有营养师团队接诊。</li>
-        <li>负责后端架构、接口规范与协作流程，带新人。</li>
+        <li>社区约号系统：排期、号源、并发控制。</li>
+        <li>婴幼儿健康咨询的在线问诊：在线聊天 + 问诊，公司自有营养师接诊。</li>
       </ul>
 
       <h3>西安哈勃信息技术 ｜ 2018.12 – 2019.04</h3>
-      <p class="text-text-muted text-sm">项目经理 / 技术合伙人（自己创业）· 3 人团队</p>
+      <p class="text-text-muted text-sm">技术合伙人（自己创业）· 3 人团队</p>
       <ul>
-        <li>面向中小培训机构的<strong>课程预约小程序</strong>，从 0 到上线约 3 个月。</li>
-        <li>结果：<strong>没找到市场</strong>——原定合作的机构放鸽子，团队不具备推广能力。
-          这次让我明白：<strong>能做出来和有人要，是两件事</strong>。</li>
+        <li>面向中小培训机构的课程预约小程序，从 0 到上线约三个月。</li>
+        <li>没跑通：合作机构放鸽子，团队没有推广能力。</li>
       </ul>
 
       <h3>更早</h3>
       <ul>
-        <li>上海三高计算机中心（股份）｜ 2017.06 – 2018.11 ｜ .NET 开发工程师</li>
-        <li>上海航天动力科技工程 ｜ 2015.06 – 2017.03 ｜ 软件开发工程师</li>
+        <li>上海三高计算机中心（股份）｜ 2017.06 – 2018.11 ｜ .NET 开发</li>
+        <li>上海航天动力科技工程 ｜ 2015.06 – 2017.03 ｜ 软件开发</li>
       </ul>
 
-      <h2>能力</h2>
+      <h2>写的和做的</h2>
       <ul>
-        <li><strong>后端</strong>：Node.js / TypeScript（主力）、Go、早期 .NET；REST / WebSocket / 长连接；数据一致性与幂等设计</li>
-        <li><strong>AI 工程</strong>：LangGraph / LangChain、RAG（检索 + 切分 + 评测）、Agent 工具调用与兜底、评测集构建</li>
-        <li><strong>业务域</strong>：Shopify 独立站、DTC、售前会话系统；Shopify Admin API / 商品数据 / CSV 批量管线</li>
-        <li><strong>交付</strong>：需求收敛、方案取舍、跨角色协作（PM / 运营 / 客户）、把结果写成指标</li>
+        <li>
+          <a href="https://moyuanhua.github.io/writing/ai-visibility-77-stores/" target="_blank" rel="noopener noreferrer">我测了 77 家独立站</a>
+          ：自己扫的，中位 53 分，超过一半的店卡在平台默认模板上。
+        </li>
+        <li>
+          <a href="https://moyuanhua.github.io/writing/ai-in-independent-store/" target="_blank" rel="noopener noreferrer">AI 在独立站该落在哪两段</a>
+          ：建站和售前怎么接成一个回路。
+        </li>
+        <li>
+          <a href="https://moyuanhua.github.io/projects/geo-landing/" target="_blank" rel="noopener noreferrer">geo-landing</a>
+          ：输入域名，给独立站打一个 AI 可发现性分，免费自测。
+        </li>
+        <li>
+          <a href="https://moyuanhua.github.io/projects/opencode-feishu-plugin/" target="_blank" rel="noopener noreferrer">opencode-feishu-plugin</a>
+          ：把编码 Agent 接进飞书，不监听端口、不要群权限。
+        </li>
       </ul>
 
-      <h2>开源与作品</h2>
+      <h2>能干什么</h2>
       <ul>
-        <li>
-          <a href="https://moyuanhua.github.io/projects/opencode-feishu-plugin/" target="_blank" rel="noopener noreferrer">
-            opencode-feishu-plugin</a>
-          ：把编码 Agent 接进飞书，一个话题 = 一个会话，零公网端点、最小权限，
-          <strong>849 个测试</strong>，修掉三类静默失败（pid 复用锁残留 / 消息重推 / 字段不一致致兜底失效）。
-        </li>
-        <li>
-          <a href="https://moyuanhua.github.io/projects/geo-landing/" target="_blank" rel="noopener noreferrer">
-            geo-landing</a>
-          ：独立站「AI 可发现性体检」，零依赖 Cloudflare Worker，实测
-          <a href="https://moyuanhua.github.io/writing/ai-visibility-77-stores/" target="_blank" rel="noopener noreferrer">
-            77 家独立站</a>（中位 53 分，55% 卡在平台默认模板）。
-        </li>
-        <li>
-          <a href="https://moyuanhua.github.io/projects/copilot-openai-compatible/" target="_blank" rel="noopener noreferrer">
-            copilot-openai-compatible</a>
-          ：把 GitHub Copilot 包装成 OpenAI 兼容接口，任何 OpenAI 生态框架可直接接入。
-        </li>
+        <li>后端：Node / TypeScript，Go 写过服务；接口、长连接、数据一致性。</li>
+        <li>AI 应用：LangGraph / LangChain、RAG、Agent 工具调用与兜底、评测集。</li>
+        <li>业务：Shopify 独立站、DTC、售前会话系统。</li>
+        <li>交付：把模糊需求拆成能做的范围，判断什么先做什么不做。</li>
       </ul>
 
       <h2>教育</h2>
-      <p>上海第二工业大学 ｜ 计算机科学与技术 ｜ 本科（全日制）｜ 2011.09 – 2015.06</p>
+      <p>上海第二工业大学 · 计算机科学与技术 · 本科（全日制）· 2011.09 – 2015.06</p>
 
       <h2>联系</h2>
       <ul>
@@ -118,7 +131,7 @@ const EMAIL = 'moyuanhua.ch@gmail.com';
       </ul>
 
       <p class="text-text-muted text-sm mt-10">
-        本页为公开版简历（脱敏）。完整版含项目指标与业务数据，可邮件索取。
+        这是公开版，省了具体业务数据。完整版可以邮件要。
       </p>
     </div>
   </section>
